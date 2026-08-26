@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Randstad — The Hiring Canary</title>
+<style>
+:root{--ink:#141821;--paper:#f4f1e9;--panel:#fffefb;--line:#ddd6c8;--fee:#0f6e5c;--profit:#c65a33;--grid:#e6e0d3;--digi:#3a6ea5;--muted:#726b5d;--pos:#0f6e5c;--neg:#c1352b;--gold:#b8892b;--warn:#a8742a}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;line-height:1.55;padding-bottom:90px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace}
+.wrap{max-width:980px;margin:0 auto;padding:0 26px}
+header.mast{border-bottom:3px solid var(--ink);padding:40px 0 22px}
+.kick{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--profit);margin-bottom:12px}
+h1{font-size:52px;font-weight:700;letter-spacing:-.025em;line-height:.98}
+h1 .sub{display:block;font-size:18px;font-weight:400;font-style:italic;color:var(--muted);letter-spacing:0;margin-top:14px;line-height:1.4;max-width:680px}
+.factbar{display:flex;flex-wrap:wrap;border:1px solid var(--line);margin-top:26px;background:var(--panel)}
+.fact{flex:1;min-width:120px;padding:14px 16px;border-right:1px solid var(--line)}.fact:last-child{border-right:none}
+.fact .n{font-size:22px;font-weight:700;letter-spacing:-.01em}.fact .n.neg{color:var(--neg)}.fact .n.pos{color:var(--pos)}
+.fact .l{font-family:"IBM Plex Mono",monospace;font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+section{margin-top:44px}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding-bottom:8px;border-bottom:1px solid var(--ink);margin-bottom:18px;display:flex;justify-content:space-between;align-items:baseline}
+.eyebrow .hint{text-transform:none;letter-spacing:0;font-style:italic;font-family:inherit;font-size:12px}
+.chartcard{background:var(--panel);border:1px solid var(--line);padding:22px 20px 14px}
+.legend{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:6px}
+.legend span{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.sw{width:15px;height:3px;display:inline-block;border-radius:2px}.sw.dot{width:9px;height:9px;border-radius:50%}
+svg{width:100%;height:auto;display:block;overflow:visible}
+.gl{stroke:var(--grid);stroke-width:1}.axlab{font-family:"IBM Plex Mono",monospace;font-size:10px;fill:var(--muted)}
+.dpt{cursor:pointer}.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--paper);padding:9px 12px;font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.5;border-radius:3px;opacity:0;transition:opacity .12s;z-index:50;max-width:240px}.tip b{color:#e8c877}
+.tl{position:relative}.tlitem{display:grid;grid-template-columns:92px 1fr;border-top:1px solid var(--line)}.tlitem:last-child{border-bottom:1px solid var(--line)}
+.tldate{padding:16px 14px 16px 0;border-right:2px solid var(--line)}.tldate .q{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:12px}
+.tldate .tag{display:inline-block;margin-top:6px;font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:2px}
+.tag.inflection{background:#f6e3da;color:var(--profit)}.tag.recent{background:#e0ece8;color:var(--fee)}
+.tlbody{padding:16px 0 16px 20px}.tlbody p{font-size:14px;color:#25272d}
+.ai-hero{background:var(--ink);color:var(--paper);padding:26px}.ai-hero .lab{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#8fb4d4}
+.ai-hero h3{font-size:25px;font-weight:700;margin:8px 0 4px;max-width:640px;line-height:1.15}.ai-hero p.k{font-size:14.5px;color:#cdc8bc;font-style:italic;max-width:600px}
+.ai-steps{display:grid;grid-template-columns:repeat(3,1fr);margin-top:22px;border-top:1px solid #2c313d}
+.ai-step{padding:16px 16px 4px;border-right:1px solid #2c313d}.ai-step:last-child{border-right:none}
+.ai-step .q{font-family:"IBM Plex Mono",monospace;font-size:11px;color:#8fb4d4;font-weight:600}.ai-step p{font-size:12.5px;color:#ddd8cc;margin-top:7px;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.smallmult{background:var(--panel);border:1px solid var(--line);padding:14px 14px 8px}
+.smallmult h4{font-size:15px;font-weight:700;margin-bottom:2px;display:flex;justify-content:space-between;align-items:baseline}
+.smallmult .verdict{font-family:"IBM Plex Mono",monospace;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border-radius:2px;font-weight:400}
+.v-weak{background:#f6e0dd;color:var(--neg)}.v-strong{background:#dfeae5;color:var(--pos)}.v-mixed{background:#f2ead6;color:var(--gold)}
+.smallmult .cap{font-family:"IBM Plex Mono",monospace;font-size:9.5px;color:var(--muted);margin-bottom:8px}
+.spec-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}.spec-row:last-child{border-bottom:none}
+.spec-name{width:100px;font-weight:600;font-size:13px}.spec-bar-wrap{flex:1;height:22px;background:#efe9dc;border-radius:2px;position:relative;overflow:hidden}
+.spec-bar{height:100%;border-radius:2px}.spec-val{font-family:"IBM Plex Mono",monospace;font-size:11px;width:120px;text-align:right;color:var(--muted)}
+.verdict-box{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--profit);padding:22px 24px;margin-top:22px}
+.verdict-box h4{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--profit);margin-bottom:10px}
+.verdict-box p{font-size:14.5px;margin-bottom:10px}.verdict-box p:last-child{margin-bottom:0}
+.note-strip{background:#f7efe0;border:1px solid #e6d3ad;padding:11px 14px;font-size:12.5px;color:#6b5320;margin-bottom:16px;font-family:"IBM Plex Mono",monospace;line-height:1.5}
+footer{margin-top:50px;padding-top:18px;border-top:1px solid var(--line);font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted);line-height:1.7}
+a{color:var(--digi)}
+@media(max-width:720px){h1{font-size:34px}.ai-steps{grid-template-columns:1fr}.ai-step{border-right:none;border-bottom:1px solid #2c313d}.grid2{grid-template-columns:1fr}.tlitem{grid-template-columns:76px 1fr}}
+</style></head><body>
+<div class="tip" id="tip"></div>
+<div class="wrap">
+<header class="mast">
+<div class="kick">Public Recruiters as a Hiring Canary · Randstad Deep Dive</div>
+<h1>Randstad<span class="sub">The world&rsquo;s largest staffing firm, quarter by quarter. Group fees and profit since 2019, then the country and specialization detail &mdash; the cleanest, most continuous cut &mdash; to test where the weakness really sits and how AI is entering the business.</span></h1>
+<div class="factbar" id="factbar"></div>
+</header>
+
+<section>
+<div class="eyebrow"><span>1 · Group trajectory</span><span class="hint">30 quarters, fully continuous &middot; hover for detail &middot; &euro;m</span></div>
+<div class="chartcard">
+<div class="legend"><span><i class="sw" style="background:var(--fee)"></i> Gross profit (net fees)</span><span><i class="sw" style="background:var(--profit)"></i> Operating income</span><span><i class="sw dot" style="background:var(--profit)"></i> Commentary point</span></div>
+<div id="groupchart"></div></div>
+</section>
+
+<section>
+<div class="eyebrow"><span>Why the numbers moved</span><span class="hint">peak &rarr; trough &rarr; recovery</span></div>
+<div class="tl" id="timeline"></div>
+</section>
+
+<section>
+<div class="eyebrow"><span>2 · By country</span><span class="hint">revenue bars + EBITA-margin line &middot; Q2&rsquo;23&ndash;Q2&rsquo;26</span></div>
+<div class="note-strip">MOST CONTINUOUS CUT · Individual countries are reported consistently even though Randstad&rsquo;s regional groupings were redefined in 2024 and 2026. Half-year datapoints (Q2 / Q4) shown &mdash; the stable, comparable window.</div>
+<div class="grid2" id="countrygrid"></div>
+</section>
+
+<section>
+<div class="eyebrow"><span>3 · By specialization</span><span class="hint">the AI-exposure test</span></div>
+<div class="note-strip">Operational = temp/blue-collar &amp; volume hiring · Professional = perm white-collar · Digital = tech/IT talent · Enterprise = large managed accounts. The perm &amp; digital lines are the most AI-exposed.</div>
+<div class="chartcard"><div class="cap mono" style="margin-bottom:12px;color:var(--muted)">Revenue by specialization &mdash; Q4 2025 vs Q4 2024 (&euro;m, YoY organic change)</div><div id="specchart"></div></div>
+</section>
+
+<section>
+<div class="eyebrow"><span>The AI &amp; digital signal</span><span class="hint">the actual canary question</span></div>
+<div class="ai-hero">
+<div class="lab">Management stance: deploying, not (yet) disrupted</div>
+<h3>Randstad frames AI as a productivity tailwind &mdash; and says clients aren&rsquo;t abandoning flexible staffing</h3>
+<p class="k">Its digital marketplace scaled to &euro;4bn annualized revenue while it cut opex and FTEs. Yet the AI-exposed specializations (Professional, Digital) are its weakest lines &mdash; the tension at the heart of the thesis.</p>
+<div class="ai-steps" id="aisteps"></div></div>
+</section>
+
+<section>
+<div class="eyebrow"><span>Verdict</span><span class="hint">what the data says</span></div>
+<div class="verdict-box">
+<h4>What Randstad&rsquo;s data says about the canary</h4>
+<p id="v1"></p><p id="v2"></p><p id="v3"></p></div>
+</section>
+
+<footer>
+<div>SOURCE · Quartr standardized financials (group) + Randstad quarterly interim reports (country &amp; specialization tables), FY2019 Q1&ndash;FY2026 Q2. Fiscal year = calendar year. &euro;m.</div>
+<div>CONTINUITY · Group series is fully continuous (30 qtrs). Country series uses Q2/Q4 datapoints Q2&rsquo;23&ndash;Q2&rsquo;26 &mdash; the window where individual-country reporting is stable. Regional groupings changed 2024 &amp; 2026; specialization boundaries were realigned, so the specialization view is shown for recent comparable periods only.</div>
+<div>METHOD · Gross profit used as net-fee proxy (strips pass-through temp wages). Commentary paraphrased from earnings materials, not quoted.</div>
+</footer>
+</div>
+
+<script>
+const DATA = {"group": {"id": 4996, "name": "Randstad", "ticker": "RAND", "country": "NL", "currency": "EUR", "type": "Staffing", "reporting": "quarterly", "fee_metric": "gross_profit", "quarters": [{"q": "Q1 2019", "rev": 5718, "gp": 1128, "oi": 188, "ni": 133}, {"q": "Q2 2019", "rev": 5957, "gp": 1193, "oi": 238, "ni": 166}, {"q": "Q3 2019", "rev": 6006, "gp": 1203, "oi": 203, "ni": 140}, {"q": "Q4 2019", "rev": 5995, "gp": 1181, "oi": 230, "ni": 167}, {"q": "Q1 2020", "rev": 5414, "gp": 1049, "oi": 81, "ni": 49}, {"q": "Q2 2020", "rev": 4437, "gp": 829, "oi": -69, "ni": -57}, {"q": "Q3 2020", "rev": 5174, "gp": 974, "oi": 157, "ni": 104}, {"q": "Q4 2020", "rev": 5693, "gp": 1096, "oi": 215, "ni": 208}, {"q": "Q1 2021", "rev": 5528, "gp": 1059, "oi": 215, "ni": 153}, {"q": "Q2 2021", "rev": 6078, "gp": 1182, "oi": 239, "ni": 176}, {"q": "Q3 2021", "rev": 6275, "gp": 1251, "oi": 270, "ni": 199}, {"q": "Q4 2021", "rev": 6754, "gp": 1404, "oi": 309, "ni": 240}, {"q": "Q1 2022", "rev": 6621, "gp": 1360, "oi": 276, "ni": 209}, {"q": "Q2 2022", "rev": 6886, "gp": 1456, "oi": 260, "ni": 196}, {"q": "Q3 2022", "rev": 7054, "gp": 1479, "oi": 316, "ni": 230}, {"q": "Q4 2022", "rev": 7007, "gp": 1456, "oi": 285, "ni": 294}, {"q": "Q1 2023", "rev": 6518, "gp": 1368, "oi": 218, "ni": 154}, {"q": "Q2 2023", "rev": 6465, "gp": 1337, "oi": 206, "ni": 137}, {"q": "Q3 2023", "rev": 6260, "gp": 1293, "oi": 245, "ni": 170}, {"q": "Q4 2023", "rev": 6183, "gp": 1280, "oi": 162, "ni": 163}, {"q": "Q1 2024", "rev": 5938, "gp": 1197, "oi": 126, "ni": 88}, {"q": "Q2 2024", "rev": 6085, "gp": 1198, "oi": 125, "ni": 78}, {"q": "Q3 2024", "rev": 6015, "gp": 1168, "oi": 167, "ni": 106}, {"q": "Q4 2024", "rev": 6084, "gp": 1138, "oi": -13, "ni": -149}, {"q": "Q1 2025", "rev": 5656, "gp": 1090, "oi": 130, "ni": 79}, {"q": "Q2 2025", "rev": 5794, "gp": 1094, "oi": 117, "ni": 47}, {"q": "Q3 2025", "rev": 5810, "gp": 1062, "oi": 136, "ni": 83}, {"q": "Q4 2025", "rev": 5817, "gp": 1068, "oi": 129, "ni": 90}, {"q": "Q1 2026", "rev": 5513, "gp": 1019, "oi": 105, "ni": 64}, {"q": "Q2 2026", "rev": 5897, "gp": 1069, "oi": 145, "ni": 84}], "commentary": [{"q": "Q2 2020", "type": "inflection", "note": "COVID trough. Revenue collapsed to EUR4.44bn (-26% YoY), the only quarter of operating loss (-EUR69m) in the whole series. Gross profit fell to EUR829m. Recovery began the following quarter as lockdowns eased."}, {"q": "Q3 2022", "type": "inflection", "note": "Cycle peak. Gross profit peaked at EUR1,479m and operating income at EUR316m on the post-COVID hiring boom and wage inflation. Everything after this is the down-cycle the FT article is describing."}, {"q": "Q4 2024", "type": "inflection", "note": "Worst quarter of the down-cycle. Net income swung to -EUR149m despite positive EBITA, driven by ~EUR260m of impairments: EUR121m goodwill write-down (Sweden, UK Enterprise) plus loan write-downs. Q4 organic revenue -5.5%; gross margin fell to 18.8% (from 20.7%) on adverse mix and idle time. Management called the labour market 'stuck' - low hiring, low quit rates. Automotive under pressure; Monster disposal also hit reported lines. Only 25% of the business was in 'growth segments' at this point."}, {"q": "Q2 2025", "type": "recent", "note": "Revenue EUR5.8bn (-2.3% YoY); underlying EBITA EUR171m (3.0% margin). Net income -40% YoY to EUR47m. Gross margin slipped to 18.9% (from 19.8%). Opex -4%, FTEs -6% - aggressive cost-out. Professional -9% (the weak spot); Operational more resilient. Japan +6%, India strong, APAC back to growth; Northern Europe & UK still weak. Full write-down of legacy loans to CareerBuilder and Monster (both bankrupt): EUR32m fair-value hit. On track for EUR100m annualized structural savings."}, {"q": "Q4 2025", "type": "recent", "note": "Revenue EUR5.8bn (-2.1% YoY); underlying EBITA EUR191m (3.3%). Net income back to +EUR90m (vs -EUR149m in Q4 2024). FY net income EUR299m. Growth segments now >50% of business (up from 25% a year earlier) - the pivot is working. FCF EUR598m for the year (+77%); leverage down to 1.3x. Germany -10% and Digital specialization -9% remain the soft spots; US +6%, Japan +6%, India double-digit. >EUR100m structural savings delivered."}, {"q": "Q2 2026", "type": "recent", "note": "Return to growth. Organic revenue +1.9% YoY; net income EUR84m (+79%); adjusted net income +30%. Broad-based - strong US Operational (+13%), Southern Europe, e-commerce, healthcare, logistics. Germany back to growth (+4%, operational +8%); automotive recovery broad-based across France, Germany, Spain. Gross margin 18.2% (from 18.9%) on mix, Dutch CLA changes, weak yen. Early-cyclical recovery led by manufacturing/logistics/large clients; SMEs still subdued."}], "ai_signal": [{"q": "Q2 2025", "stance": "deploying", "note": "Management flagged digital and AI-related services seeing increased demand, and digital-first initiatives supporting profitability despite lower top-line. RPO demand cited as a positive trend."}, {"q": "Q4 2025", "stance": "deploying", "note": "Digital marketplaces reached EUR4bn annualized revenue; 1.4m self-scheduled shifts in Q4 (+30% QoQ). Appointed first-ever Chief Digital Growth Officer to accelerate digital strategy. Growth/digital segments now >50% of business vs 25% a year prior - a deliberate structural pivot toward tech-enabled delivery."}, {"q": "Q2 2026", "stance": "deploying", "note": "Digital marketplace enabled 1.7m self-scheduled shifts in Q2 (up from 1.4m in Q4 2025). 'Partner for Talent' transformation with 45+ talent & delivery centres. Framed consistently as productivity/margin tailwind (opex -3-4% YoY), NOT a demand threat. Management (Q4 2024) explicitly said no structural shift away from flexible-workforce usage by clients."}], "data_quality": "GOOD - Quartr standardized quarterly financials clean and internally consistent for all 30 quarters.", "geo_notes": {"germany": "The FT's key drag. Germany -10% in Q4 2025 (automotive weakness), stabilized through 2025, then RETURNED TO GROWTH +4% in Q2 2026 with automotive recovering. Randstad's data supports the FT's Germany-weakness claim for 2024-25 but shows it inflecting positive by mid-2026.", "japan": "Consistent bright spot, echoing the FT's 'Japan strong' claim: +6% in both Q2 2025 and Q4 2025. Part of APAC which returned to growth ahead of Europe.", "us": "Early-cyclical leader in the recovery: US operations +6% (Q4 2025), US Operational +13% (Q2 2026)."}, "summary_stats": {"peak_gp_q": "Q3 2022", "peak_gp": 1479, "trough_covid_q": "Q2 2020", "trough_covid_gp": 829, "latest_q": "Q2 2026", "latest_gp": 1069, "gp_decline_from_peak_pct": -27.7, "series_span": "Q1 2019 - Q2 2026 (30 quarters)"}}, "seg": {"note": "Country-level revenue (EUR m) and EBITA margin (%) extracted from Randstad quarterly interim reports. Geography reporting structure CHANGED 2024 and again Jan 1 2026 (country grouping into regions differs by period). Specialization = Operational/Professional/Digital/Enterprise, also realigned over time. Each report yields current quarter + year-ago comparative. EXTRACTION IN PROGRESS - covering 2019-2026.", "segment_breaks": ["2024: segment reporting structure changed to align with management/strategy", "Jan 1 2026: geographical segmentation changed again; countries now reported flat (major European markets vs other Europe & Latam) rather than grouped into Northern/Southern Europe regions. 2025 comparatives restated."], "geography": {"Q2 2026": {"North America": {"rev": 1103, "ebita_margin": 4.2}, "Netherlands": {"rev": 721, "ebita_margin": 3.8}, "Germany": {"rev": 386, "ebita_margin": 2.3}, "Belgium & Luxembourg": {"rev": 352, "ebita_margin": 4.7}, "France": {"rev": 853, "ebita_margin": 3.6}, "Italy": {"rev": 620, "ebita_margin": 5.9}, "Iberia": {"rev": 535, "ebita_margin": 5.7}, "Other Europe & Latam": {"rev": 749, "ebita_margin": 2.0}, "Asia Pacific": {"rev": 578, "ebita_margin": 3.8}}, "Q2 2025": {"North America": {"rev": 1083, "ebita_margin": 4.1}, "Netherlands": {"rev": 733, "ebita_margin": 4.4}, "Germany": {"rev": 370, "ebita_margin": -0.6}, "Belgium & Luxembourg": {"rev": 370, "ebita_margin": 4.3}, "France": {"rev": 869, "ebita_margin": 4.1}, "Italy": {"rev": 584, "ebita_margin": 6.1}, "Iberia": {"rev": 482, "ebita_margin": 5.9}, "Other Europe & Latam": {"rev": 723, "ebita_margin": 1.6}, "Asia Pacific": {"rev": 580, "ebita_margin": 4.3}}, "Q4 2025": {"North America": {"rev": 1101, "ebita_margin": 3.6}, "Netherlands": {"rev": 765, "ebita_margin": 2.8}, "Germany": {"rev": 360, "ebita_margin": 3.0}, "Belgium & Luxembourg": {"rev": 380, "ebita_margin": 6.2}, "Other NE Countries": {"rev": 389, "ebita_margin": 3.4}, "France": {"rev": 821, "ebita_margin": 5.4}, "Italy": {"rev": 576, "ebita_margin": 5.7}, "Iberia": {"rev": 513, "ebita_margin": 5.9}, "Other SE/UK/Latam": {"rev": 351, "ebita_margin": 3.0}, "Asia Pacific": {"rev": 561, "ebita_margin": 3.3}}, "Q4 2024": {"North America": {"rev": 1190, "ebita_margin": 3.4}, "Netherlands": {"rev": 768, "ebita_margin": 4.6}, "Germany": {"rev": 397, "ebita_margin": -0.5}, "Belgium & Luxembourg": {"rev": 392, "ebita_margin": 4.9}, "Other NE Countries": {"rev": 376, "ebita_margin": 1.4}, "France": {"rev": 863, "ebita_margin": 4.1}, "Italy": {"rev": 561, "ebita_margin": 6.2}, "Iberia": {"rev": 483, "ebita_margin": 6.5}, "Other SE/UK/Latam": {"rev": 437, "ebita_margin": 1.5}, "Asia Pacific": {"rev": 617, "ebita_margin": 4.3}}, "Q2 2024": {"North America": {"rev": 1194, "ebita_margin": 3.4}, "Netherlands": {"rev": 753, "ebita_margin": 4.6}, "Germany": {"rev": 409, "ebita_margin": -1.6}, "Belgium & Luxembourg": {"rev": 379, "ebita_margin": 4.4}, "Other NE Countries": {"rev": 335, "ebita_margin": 1.4}, "France": {"rev": 935, "ebita_margin": 4.3}, "Italy": {"rev": 585, "ebita_margin": 6.3}, "Iberia": {"rev": 472, "ebita_margin": 5.9}, "Other SE/UK/Latam": {"rev": 435, "ebita_margin": 2.6}, "Asia Pacific": {"rev": 588, "ebita_margin": 3.8}}, "Q2 2023": {"North America": {"rev": 1360, "ebita_margin": 5.6}, "Netherlands": {"rev": 811, "ebita_margin": 5.7}, "Germany": {"rev": 478, "ebita_margin": 4.0}, "Belgium & Luxembourg": {"rev": 376, "ebita_margin": 4.5}, "Other NE Countries": {"rev": 378, "ebita_margin": 1.6}, "France": {"rev": 1006, "ebita_margin": 5.0}, "Italy": {"rev": 556, "ebita_margin": 7.0}, "Iberia": {"rev": 388, "ebita_margin": 5.9}, "Other SE/UK/Latam": {"rev": 442, "ebita_margin": 2.3}, "Asia Pacific": {"rev": 670, "ebita_margin": 4.9}}}, "specialization": {"Q4 2025": {"Operational": 3908, "Professional": 960, "Digital": 636, "Enterprise": 313}, "Q4 2024": {"Operational": 4003, "Professional": 1036, "Digital": 702, "Enterprise": 343}}, "country_detail": {"Germany": {"Q4 2024": "-9% reported / -10% organic; EBITA margin -0.5%", "Q2 2025": "stabilizing; margin -0.6%", "Q4 2025": "-10% organic; margin recovered to 3.0%", "Q1 2026": "-4%", "Q2 2026": "+4% YoY (Operational +8%); margin +2.3% - RETURN TO GROWTH"}, "Japan": {"Q4 2025": "+6% YoY (Operational +7%, Digital +7%)", "Q1 2026": "+5%", "Q2 2026": "+5% YoY (Operational +4%, Digital +4%)"}, "United States": {"Q4 2025": "+1% combined (US Operational +6%, Professional -10%)", "Q2 2026": "+5% (US Operational +13%, Professional -6%, Digital -3%)"}, "UK": {"Q4 2025": "-12% YoY", "Q1 2026": "-9%", "Q2 2026": "+3% YoY"}}, "country_timeseries": {"_note": "Individual-country revenue (EUR m) and EBITA margin (%), the most continuous available cut. Countries reported consistently even as regional groupings changed. Q2 and Q4 datapoints assembled from interim reports.", "Germany": [{"q": "Q2 2023", "rev": 478, "m": 4.0}, {"q": "Q2 2024", "rev": 409, "m": -1.6}, {"q": "Q4 2024", "rev": 397, "m": -0.5}, {"q": "Q2 2025", "rev": 370, "m": -0.6}, {"q": "Q4 2025", "rev": 360, "m": 3.0}, {"q": "Q2 2026", "rev": 386, "m": 2.3}], "Japan_note": "Japan revenue not broken out in EUR absolute in these tables (reported as growth % within APAC); consistently +2% (Q2'24) rising to +5-6% (2025-26). Margin within APAC region.", "United States_note": "US reported as growth % within North America; -13% (Q2'24) improving to +5% (Q2'26), US Operational +13%.", "France": [{"q": "Q2 2023", "rev": 1006, "m": 5.0}, {"q": "Q2 2024", "rev": 935, "m": 4.3}, {"q": "Q4 2024", "rev": 863, "m": 4.1}, {"q": "Q2 2025", "rev": 869, "m": 4.1}, {"q": "Q4 2025", "rev": 821, "m": 5.4}, {"q": "Q2 2026", "rev": 853, "m": 3.6}], "Italy": [{"q": "Q2 2023", "rev": 556, "m": 7.0}, {"q": "Q2 2024", "rev": 585, "m": 6.3}, {"q": "Q4 2024", "rev": 561, "m": 6.2}, {"q": "Q2 2025", "rev": 584, "m": 6.1}, {"q": "Q4 2025", "rev": 576, "m": 5.7}, {"q": "Q2 2026", "rev": 620, "m": 5.9}], "Netherlands": [{"q": "Q2 2023", "rev": 811, "m": 5.7}, {"q": "Q2 2024", "rev": 753, "m": 4.6}, {"q": "Q4 2024", "rev": 768, "m": 4.6}, {"q": "Q2 2025", "rev": 733, "m": 4.4}, {"q": "Q4 2025", "rev": 765, "m": 2.8}, {"q": "Q2 2026", "rev": 721, "m": 3.8}], "Iberia": [{"q": "Q2 2023", "rev": 388, "m": 5.9}, {"q": "Q2 2024", "rev": 472, "m": 5.9}, {"q": "Q4 2024", "rev": 483, "m": 6.5}, {"q": "Q2 2025", "rev": 482, "m": 5.9}, {"q": "Q4 2025", "rev": 513, "m": 5.9}, {"q": "Q2 2026", "rev": 535, "m": 5.7}], "North America": [{"q": "Q2 2023", "rev": 1360, "m": 5.6}, {"q": "Q2 2024", "rev": 1194, "m": 3.4}, {"q": "Q4 2024", "rev": 1190, "m": 3.4}, {"q": "Q2 2025", "rev": 1083, "m": 4.1}, {"q": "Q4 2025", "rev": 1101, "m": 3.6}, {"q": "Q2 2026", "rev": 1103, "m": 4.2}], "Asia Pacific": [{"q": "Q2 2023", "rev": 670, "m": 4.9}, {"q": "Q2 2024", "rev": 588, "m": 3.8}, {"q": "Q4 2024", "rev": 617, "m": 4.3}, {"q": "Q2 2025", "rev": 580, "m": 4.3}, {"q": "Q4 2025", "rev": 561, "m": 3.3}, {"q": "Q2 2026", "rev": 578, "m": 3.8}]}}};
+const G = DATA.group, S = DATA.seg;
+const tip=document.getElementById('tip');
+const ss=G.summary_stats;
+
+document.getElementById('factbar').innerHTML=[
+['#1','World staffing rank'],
+['&euro;'+(ss.peak_gp/1000).toFixed(2)+'bn','Peak fees '+ss.peak_gp_q.replace(' ','&rsquo;')],
+[ss.gp_decline_from_peak_pct+'%','Fees vs peak','neg'],
+['+1.9%','Latest organic gth','pos'],
+['&euro;4bn','Digital mktplace run-rate']
+].map(f=>`<div class="fact"><div class="n ${f[2]||''}">${f[0]}</div><div class="l">${f[1]}</div></div>`).join('');
+
+// group chart
+const commQs={};G.commentary.forEach(c=>commQs[c.q]=c.type);
+function groupChart(){
+ const qs=G.quarters,W=920,H=320,pL=50,pR=14,pT=20,pB=42;
+ const xs=i=>pL+i*(W-pL-pR)/(qs.length-1);
+ const vals=[];qs.forEach(q=>{vals.push(q.gp,q.oi)});const mx=Math.max(...vals),mn=Math.min(0,...vals);
+ const ys=v=>pT+(mx-v)/(mx-mn)*(H-pT-pB);
+ const ln=k=>qs.map((q,i)=>(i?'L':'M')+xs(i).toFixed(1)+' '+ys(q[k]).toFixed(1)).join(' ');
+ let g='';for(let v=0;v<=1500;v+=500){const y=ys(v);g+=`<line class="gl" x1="${pL}" y1="${y}" x2="${W-pR}" y2="${y}"/><text class="axlab" x="${pL-7}" y="${y+3}" text-anchor="end">${v}</text>`}
+ const z=ys(0);g+=`<line x1="${pL}" y1="${z}" x2="${W-pR}" y2="${z}" stroke="#c9c1b0" stroke-dasharray="3 3"/>`;
+ let xl='';qs.forEach((q,i)=>{if(q.q.startsWith('Q1')||i===0)xl+=`<text class="axlab" x="${xs(i)}" y="${H-22}" text-anchor="middle">${q.q.slice(3)}</text>`});
+ let dots='';qs.forEach((q,i)=>{const c=commQs[q.q];dots+=`<circle class="dpt" cx="${xs(i)}" cy="${ys(q.gp)}" r="${c?5:3}" fill="${c?'var(--profit)':'var(--fee)'}" data-i="${i}"/><circle class="dpt" cx="${xs(i)}" cy="${ys(q.oi)}" r="2.5" fill="var(--profit)" opacity=".5" data-i="${i}"/>`});
+ return `<svg viewBox="0 0 ${W} ${H}">${g}${xl}<path d="${ln('gp')}" fill="none" stroke="var(--fee)" stroke-width="2.6"/><path d="${ln('oi')}" fill="none" stroke="var(--profit)" stroke-width="1.6" opacity=".8"/>${dots}</svg>`;
+}
+document.getElementById('groupchart').innerHTML=groupChart();
+const qs=G.quarters;
+document.querySelectorAll('#groupchart .dpt').forEach(el=>{el.addEventListener('mousemove',e=>{const q=qs[+el.dataset.i];const c=G.commentary.find(x=>x.q===q.q);tip.innerHTML=`<b>${q.q}</b><br>Net fees &euro;${q.gp}m<br>Op inc &euro;${q.oi}m<br>Net inc &euro;${q.ni}m`+(c?'<br><span style="color:#e8c877">● commentary</span>':'');tip.style.opacity=1;tip.style.left=Math.min(e.clientX+14,innerWidth-255)+'px';tip.style.top=(e.clientY+14)+'px'});el.addEventListener('mouseleave',()=>tip.style.opacity=0)});
+
+// timeline
+document.getElementById('timeline').innerHTML=G.commentary.map(c=>`<div class="tlitem"><div class="tldate"><div class="q">${c.q}</div><span class="tag ${c.type}">${c.type}</span></div><div class="tlbody"><p>${c.note}</p></div></div>`).join('');
+
+// country small multiples
+const cts=S.country_timeseries;
+const order=[["Germany","v-weak","WEAK &rarr; RECOVERING"],["Asia Pacific","v-strong","RESILIENT (JAPAN +6%)"],["North America","v-mixed","BOTTOMED, RECOVERING"],["France","v-mixed","SOFT"],["Italy","v-strong","STRONG"],["Iberia","v-strong","GROWTH"]];
+function miniChart(series,id){
+ const W=380,H=140,pL=32,pR=34,pT=14,pB=24;
+ const xs=i=>pL+i*(W-pL-pR)/(series.length-1);
+ const revs=series.map(s=>s.rev),ms=series.map(s=>s.m);
+ const rmax=Math.max(...revs)*1.1,rmin=0;
+ const mmax=Math.max(...ms,2)+1,mmin=Math.min(...ms,0)-1;
+ const yr=v=>pT+(rmax-v)/(rmax-rmin)*(H-pT-pB);
+ const ym=v=>pT+(mmax-v)/(mmax-mmin)*(H-pT-pB);
+ const bw=(W-pL-pR)/series.length*0.5;
+ let bars='';series.forEach((s,i)=>{const h=H-pB-yr(s.rev);bars+=`<rect class="dpt" x="${xs(i)-bw/2}" y="${yr(s.rev)}" width="${bw}" height="${h}" fill="var(--fee)" opacity=".28" data-c="${id}" data-i="${i}"/>`});
+ const mln=series.map((s,i)=>(i?'L':'M')+xs(i).toFixed(1)+' '+ym(s.m).toFixed(1)).join(' ');
+ let mdots='';series.forEach((s,i)=>{mdots+=`<circle class="dpt" cx="${xs(i)}" cy="${ym(s.m)}" r="3" fill="${s.m<0?'var(--neg)':'var(--profit)'}" data-c="${id}" data-i="${i}"/>`});
+ const zy=ym(0);
+ let xl='';series.forEach((s,i)=>{if(i%2===0||i===series.length-1)xl+=`<text class="axlab" x="${xs(i)}" y="${H-8}" text-anchor="middle" font-size="8">${s.q.replace(' ','')}</text>`});
+ return `<svg viewBox="0 0 ${W} ${H}">${bars}<line x1="${pL}" y1="${zy}" x2="${W-pR}" y2="${zy}" stroke="#d9d3c7" stroke-dasharray="2 2"/><path d="${mln}" fill="none" stroke="var(--profit)" stroke-width="2"/>${mdots}${xl}<text class="axlab" x="4" y="${pT+4}" font-size="8">&euro;m</text><text class="axlab" x="${W-2}" y="${pT+4}" text-anchor="end" font-size="8">EBITA%</text></svg>`;
+}
+document.getElementById('countrygrid').innerHTML=order.map(o=>{
+ const s=cts[o[0]];if(!s)return'';
+ const last=s[s.length-1],first=s[0];
+ return `<div class="smallmult"><h4>${o[0]}<span class="verdict ${o[1]}">${o[2]}</span></h4><div class="cap">rev bars + EBITA-margin line · latest ${last.q.replace(' ','&rsquo;')}: &euro;${last.rev}m @ ${last.m}%</div>${miniChart(s,o[0])}</div>`;
+}).join('');
+document.querySelectorAll('#countrygrid .dpt').forEach(el=>{el.addEventListener('mousemove',e=>{const s=cts[el.dataset.c][+el.dataset.i];tip.innerHTML=`<b>${el.dataset.c} · ${s.q}</b><br>Revenue &euro;${s.rev}m<br>EBITA margin ${s.m}%`;tip.style.opacity=1;tip.style.left=Math.min(e.clientX+14,innerWidth-235)+'px';tip.style.top=(e.clientY+14)+'px'});el.addEventListener('mouseleave',()=>tip.style.opacity=0)});
+
+// specialization
+const sp=S.specialization["Q4 2025"],sp0=S.specialization["Q4 2024"];
+const specMeta={"Operational":["temp / volume","0%"],"Professional":["perm white-collar","-8%"],"Digital":["tech / IT talent","-3%"],"Enterprise":["managed accounts","-4%"]};
+const spmax=Math.max(...Object.values(sp));
+document.getElementById('specchart').innerHTML=Object.keys(sp).map(k=>{
+ const cur=sp[k],prev=sp0[k],org=specMeta[k][1];
+ const neg=org.startsWith('-');
+ const w=(cur/spmax*100).toFixed(0);
+ return `<div class="spec-row"><div class="spec-name">${k}<div style="font-weight:400;font-size:10px;color:var(--muted)" class="mono">${specMeta[k][0]}</div></div><div class="spec-bar-wrap"><div class="spec-bar" style="width:${w}%;background:${neg?'linear-gradient(90deg,#d98a5a,#c65a33)':'var(--fee)'}"></div></div><div class="spec-val">&euro;${cur}m · <b style="color:${neg?'var(--neg)':'var(--pos)'}">${org} org</b></div></div>`;
+}).join('');
+
+// AI steps
+document.getElementById('aisteps').innerHTML=G.ai_signal.map(a=>`<div class="ai-step"><div class="q">${a.q}</div><p>${a.note}</p></div>`).join('');
+
+document.getElementById('v1').innerHTML='<b>The decline is real, and it is a hiring signal.</b> Group net fees fell '+ss.gp_decline_from_peak_pct+'% from the Q3&rsquo;22 peak, bottoming in profit at Q4&rsquo;24 (a &euro;260m impairment drove a net loss). Gross margin compressed on idle time and a &ldquo;stuck&rdquo; labour market &mdash; not an accounting quirk.';
+document.getElementById('v2').innerHTML='<b>Germany is the epicentre, exactly as the FT said &mdash; but it has turned.</b> German EBITA margin went from +4.0% (Q2&rsquo;23) to <span style="color:var(--neg)">&minus;1.6% (Q2&rsquo;24)</span> to +2.3% (Q2&rsquo;26) as revenue swung from &minus;16% to +4%. Japan and Iberia stayed strong throughout; the US bottomed and is now the recovery leader.';
+document.getElementById('v3').innerHTML='<b>The AI tell is in the specialization mix.</b> The most AI-exposed lines &mdash; Professional (perm) and Digital (IT) &mdash; are the weakest (&minus;8% and &minus;3% organic), while volume Operational is flat. Yet Randstad itself is scaling AI as a productivity lever (&euro;4bn digital marketplace) and denies a structural client shift from flexible staffing. Read together: the pressure on perm/digital fees is consistent with AI substitution at the margin, but the incumbent is adopting faster than it is being displaced &mdash; the thread to pull next in the pure-play perm recruiters.';
+</script></body></html>
