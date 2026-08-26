@@ -1,0 +1,991 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Randstad — Hiring Canary</title>
+<script>try{if(localStorage.getItem("scg_theme")==="dark")document.documentElement.setAttribute("data-theme","dark");}catch(e){}</script>
+<style>
+/* Starwood Design System stylesheet, v1.
+   Canonical distribution: https://design.data.starwood.com/dist/v1/scg.css
+   Source of truth: Starwood-Capital/app-design-system (site/dist/v1/scg.css).
+   Version folders are immutable once published; breaking changes ship as /dist/v2/. */
+
+/* gabe-dash.css: the shared design system for Gabe's dashboard direction.
+   Tokens and component idioms extracted verbatim from the AI Usage Tracker v3
+   artifact so the spec and every proof mockup read from one source of truth.
+   Light theme only (the direction is white-surface by design). Typeface is
+   Inter; self-hosting is a follow-up (see README). */
+
+:root {
+  /* ---- brand blues (from Gabe's Color Guide) ---- */
+  --navy: #122F67;          /* headers, primary emphasis, nav active */
+  --starwood-blue: #2869A9; /* key metrics, CTAs, links */
+  --sky: #74A9CE;           /* charts, highlights, secondary UI */
+  --mist: #C2DCF2;          /* backgrounds, fills, active states (never text) */
+
+  /* ---- greys ---- */
+  --charcoal: #2E2E2E;      /* body text (primary, not pure black) */
+  --slate: #5E5E5E;         /* secondary labels */
+  --mid-grey: #A6A6A6;      /* borders, dividers */
+  --silver: #CACACA;        /* subtle borders, lines */
+  --pearl: #F8F8F8;         /* app background (light mode) */
+  --white: #FFFFFF;         /* card/surface white */
+  --line: #E2E4E8;          /* hairline used on header, cards, sidebar */
+  --fill-soft: #F0F2F5;     /* usage callout / subtle fill */
+
+  /* ---- semantic fill + text pairs (always used together) ---- */
+  --green-fill: #C6EFCE;  --green-text: #006100;   /* On Track / success */
+  --yellow-fill: #FFEB9C; --yellow-text: #9C5700;  /* At Risk / warning */
+  --orange-fill: #FFDAB5; --orange-text: #7D3200;  /* Pending / caution */
+  --red-fill: #FFC7CE;    --red-text: #9C0006;     /* Below Target / error */
+  --purple-fill: #E2CBEF; --purple-text: #4B0074;  /* Escalated / special */
+  --inreview-fill: #C2DCF2; --inreview-text: #122F67; /* In Review (mist + navy) */
+  --inactive-fill: #E8E8E8; --inactive-text: #5E5E5E; /* Inactive / disabled */
+
+  /* ---- map geography (MapTab's LIGHT set) ---- */
+  --land-fill: #D6DCE8;  --land-stroke: #B8C0CC;
+  --ocean-bg: #EBF2FA;   --graticule: #C8D4E0;
+
+  /* ---- aliases the components read ---- */
+  --bg: var(--pearl);
+  --surface: var(--white);
+  --surface-alt: #FCFCFD;
+  --hover: #F0F2F5;
+  --border: var(--line);
+  --border-strong: var(--silver);
+  --ink: var(--charcoal);
+  --ink-2: #1F1F1F;
+  --muted: var(--slate);
+  --muted-2: var(--mid-grey);
+  --pos: var(--green-text);  --pos-soft: var(--green-fill);
+  --neg: var(--red-text);    --neg-soft: var(--red-fill);
+
+  /* ---- tracker vendor accents: map to the brand blues.
+     Series colors for Claude vs ChatGPT charts are provisional until the
+     Font/Chart sections of the style guide are captured. ---- */
+  --claude: var(--navy);
+  --claude-soft: var(--mist);
+  --chatgpt: var(--sky);
+  --chatgpt-soft: #E6F0F8;
+
+  /* ---- elevation (from the guide's cards/header) ---- */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  --shadow:    0 1px 4px rgba(0,0,0,0.05);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+
+  /* ---- radii ---- */
+  --r-sm: 8px;
+  --r:    8px;
+  --r-lg: 10px;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+  font-family: "Inter", -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+button { font-family: inherit; font-size: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+a { color: inherit; text-decoration: none; }
+.mono { font-family: ui-monospace, "SFMono-Regular", "Menlo", Consolas, monospace; font-variant-numeric: tabular-nums; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- Top bar ---------- */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky; top: 0; z-index: 20;
+  backdrop-filter: saturate(180%) blur(6px);
+}
+.topbar .brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 700; letter-spacing: -0.01em; color: var(--ink);
+}
+.topbar .brand .logo { height: 24px; width: auto; display: block; }
+.topbar .brand .dot { width: 10px; height: 10px; border-radius: 3px; background: var(--claude); }
+.topbar .meta { display: flex; align-items: center; gap: 14px; color: var(--muted); font-size: 12px; }
+.topbar .pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink-2); font-size: 12px; font-weight: 500;
+}
+.topbar .pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--pos); }
+
+/* ---------- Tab bar ---------- */
+.tabs {
+  display: flex; align-items: center; gap: 4px;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky; top: 53px; z-index: 19;
+}
+.tab {
+  padding: 14px 18px;
+  color: var(--muted); font-weight: 500; font-size: 14px;
+  border-bottom: 2px solid transparent;
+  transition: color .12s ease, border-color .12s ease, background .12s ease;
+  border-radius: 6px 6px 0 0;
+}
+.tab:hover { color: var(--ink); background: var(--hover); }
+.tab.active { color: var(--ink); border-bottom-color: var(--ink); font-weight: 600; }
+
+/* ---------- Sub-tabs ---------- */
+.sub-tabs {
+  display: flex; align-items: center; gap: 2px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto; overflow-y: hidden;
+  margin: 8px 0 18px;
+  scrollbar-width: thin;
+}
+.sub-tab {
+  padding: 9px 14px;
+  color: var(--muted); font-weight: 500; font-size: 13px;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .12s ease, border-color .12s ease, background .12s ease;
+  border-radius: 5px 5px 0 0;
+}
+.sub-tab:hover { color: var(--ink); background: var(--hover); }
+.sub-tab.active { color: var(--ink); border-bottom-color: var(--ink); font-weight: 600; }
+.sub-panel { display: none; }
+.sub-panel.active { display: block; }
+
+/* ---------- Period selector ---------- */
+.period, .heat-period {
+  display: inline-flex; align-items: center; gap: 2px;
+  padding: 3px; background: var(--surface-alt);
+  border: 1px solid var(--border); border-radius: 10px;
+}
+.period .seg, .heat-period .seg {
+  padding: 6px 12px; border-radius: 7px;
+  color: var(--muted); font-weight: 500; font-size: 13px;
+  transition: background .12s ease, color .12s ease, box-shadow .12s ease;
+}
+/* Active segment wears Starwood Blue (the brand rule for selected controls
+   and primary actions). White text on #2869A9 clears 4.5:1 in both themes. */
+.period .seg.active, .heat-period .seg.active { background: var(--starwood-blue); color: #fff; font-weight: 600; box-shadow: var(--shadow-sm); }
+.period .seg:hover:not(.active), .heat-period .seg:hover:not(.active) { color: var(--ink); }
+.period-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 22px 0 18px; flex-wrap: wrap; }
+
+/* ---------- Layout ---------- */
+main { max-width: 1380px; margin: 0 auto; padding: 20px 28px 80px; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+.page-header { margin-bottom: 6px; }
+.page-header h1 { margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+.page-header p { margin: 6px 0 0; color: var(--muted); font-size: 14px; max-width: 720px; }
+
+/* ---------- Comparison grid (product cards) ---------- */
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) { .compare-grid { grid-template-columns: 1fr; } }
+.prod-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 22px 24px;
+  transition: box-shadow .15s ease, transform .15s ease, border-color .15s ease;
+  position: relative; overflow: hidden;
+}
+.prod-card:hover { box-shadow: var(--shadow-lg); border-color: var(--border-strong); }
+.prod-card .top-accent { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.prod-card.claude  .top-accent { background: var(--claude); }
+.prod-card.chatgpt .top-accent { background: var(--chatgpt); }
+.prod-card .prod-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.prod-card .prod-name { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
+.prod-card .prod-name .logo {
+  width: 26px; height: 26px; border-radius: 6px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700; font-size: 13px;
+}
+.prod-card.claude  .logo { background: var(--claude); }
+.prod-card.chatgpt .logo { background: var(--chatgpt); }
+.prod-card .prod-period { color: var(--muted); font-size: 12px; font-weight: 500; }
+
+.metric-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  background: var(--border); border-radius: var(--r); overflow: hidden;
+  border: 1px solid var(--border);
+}
+.metric { background: var(--surface); padding: 14px 16px; transition: background .1s ease; }
+.metric:hover { background: var(--hover); }
+.metric .m-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.metric .m-value { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-top: 4px; color: var(--ink); }
+.metric .m-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+.metric.unavail .m-value { color: var(--muted-2); font-weight: 500; }
+
+.cost-split {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px;
+  background: var(--border); border-radius: var(--r); overflow: hidden;
+  border: 1px solid var(--border); margin-top: 12px;
+}
+.cost-split .cell { background: var(--surface); padding: 10px 14px; }
+.cost-split .cell .lbl { font-size: 10.5px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.cost-split .cell .val { font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.cost-split .cell .sub { font-size: 10.5px; color: var(--muted); }
+.cost-split .cell.dim .val { color: var(--muted-2); font-weight: 500; }
+
+/* ---------- Comparison table ---------- */
+.compare-table { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: 24px; }
+.compare-table table { width: 100%; border-collapse: collapse; }
+.compare-table th, .compare-table td { padding: 14px 20px; text-align: left; }
+.compare-table th { background: var(--surface-alt); color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--border); }
+.compare-table td { border-bottom: 1px solid var(--border); font-size: 14px; }
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: var(--hover); }
+.compare-table .metric-name { color: var(--muted); font-weight: 500; width: 28%; }
+.compare-table .v { font-weight: 600; font-variant-numeric: tabular-nums; }
+.compare-table .v.dim { color: var(--muted-2); font-weight: 500; }
+.compare-table th.col-claude  { color: var(--claude); }
+.compare-table th.col-chatgpt { color: var(--chatgpt); }
+
+/* ---------- KPI cards ---------- */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 22px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 18px; transition: box-shadow .15s ease, border-color .15s ease; }
+.kpi:hover { box-shadow: var(--shadow); border-color: var(--border-strong); }
+.kpi .k-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+.kpi .k-value { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-top: 6px; }
+.kpi .k-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+/* ---------- Charts & sections ---------- */
+.section-title { display: flex; align-items: baseline; justify-content: space-between; margin: 28px 0 12px; }
+.section-title h2 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+.section-title .sub { color: var(--muted); font-size: 12.5px; }
+.chart { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 8px 10px 10px; min-height: 360px; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-12-8 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; }
+@media (max-width: 980px) { .grid2, .grid-12-8 { grid-template-columns: 1fr; } }
+
+/* ---------- Tables ---------- */
+.table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.table-wrap table { width: 100%; border-collapse: collapse; }
+.table-wrap th, .table-wrap td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13px; }
+.table-wrap tr:last-child td { border-bottom: none; }
+.table-wrap th { background: var(--surface-alt); color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.table-wrap tr:hover td { background: var(--hover); }
+.table-wrap td.num, .table-wrap th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 12.5px; }
+.table-wrap td.rank { color: var(--muted); font-variant-numeric: tabular-nums; width: 32px; }
+
+.chip { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--hover); color: var(--ink-2); font-size: 11px; font-weight: 500; border: 1px solid var(--border); }
+.cons-chip { background: #fef3c7; color: #92400e; border-color: #fde68a; margin-left: 6px; letter-spacing: 0.04em; font-weight: 600; }
+
+.table-scroll { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow-x: auto; max-height: 640px; overflow-y: auto; }
+.table-scroll table { width: 100%; border-collapse: collapse; min-width: 820px; }
+.table-scroll th, .table-scroll td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 12.5px; white-space: nowrap; }
+.table-scroll th { position: sticky; top: 0; background: var(--surface-alt); color: var(--muted); font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; z-index: 2; }
+.table-scroll td.num, .table-scroll th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 12px; }
+.table-scroll td.rank { color: var(--muted); width: 38px; }
+.table-scroll tr:hover td { background: var(--hover); }
+
+/* team-usage taxonomy table */
+.tax-table td, .tax-table th { white-space: nowrap; }
+.tax-table .tax-node[data-haschildren="1"] { cursor: pointer; }
+.tax-table .tax-node[data-haschildren="1"]:hover > td:first-child { color: var(--claude); }
+.tax-table .tax-caret { display: inline-block; width: 12px; color: var(--muted); transition: transform .12s; }
+.tax-table .tax-node.open > td .tax-caret { transform: rotate(90deg); }
+.tax-table .tax-node.depth-0 > td { font-weight: 700; background: #f1f5f9; }
+.tax-table .tax-sub > td { font-weight: 600; }
+.tax-table .tax-grand > td { font-weight: 700; border-top: 2px solid var(--border); background: #eef2ff; }
+.tax-table .tax-person td { color: var(--muted); font-weight: 400; }
+.tax-table .tax-email { color: #94a3b8; font-size: 11px; }
+
+/* ---------- Spend split cards ---------- */
+.spl-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+.spl-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 14px 16px; }
+.spl-card .l { color: var(--muted); font-size: 12px; }
+.spl-card .v { font-size: 22px; font-weight: 700; margin-top: 4px; }
+.spl-card .s { color: var(--muted); font-size: 11.5px; margin-top: 2px; }
+.spl-over-license { border-left: 4px solid #ef4444; }
+
+.note { font-size: 12px; color: var(--muted); margin: 8px 4px 0; border-left: 2px solid var(--border-strong); padding-left: 10px; }
+.footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+h3.subhead { margin: 22px 0 10px; font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+h3.subhead .hint { font-weight: 400; color: var(--muted); font-size: 12.5px; margin-left: 8px; }
+
+/* ---------- Drill-down panel ---------- */
+.drill { display: grid; grid-template-columns: 1.1fr 0.9fr 1fr; gap: 0; border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; background: var(--surface); }
+@media (max-width: 1100px) { .drill { grid-template-columns: 1fr; } }
+.drill .col { border-right: 1px solid var(--border); min-height: 360px; }
+.drill .col:last-child { border-right: none; }
+.drill .col-head { padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--surface-alt); font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; display: flex; align-items: center; justify-content: space-between; }
+.drill .col-body { max-height: 480px; overflow-y: auto; }
+.drill-row { padding: 10px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; transition: background .08s ease; }
+.drill-row:hover { background: var(--hover); }
+.drill-row.active { background: var(--claude-soft); }
+.drill-row .primary { font-weight: 500; color: var(--ink-2); font-size: 13px; }
+.drill-row .secondary { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+.drill-row .right { text-align: right; font-variant-numeric: tabular-nums; font-size: 12.5px; color: var(--muted); }
+.drill-row .right .v { color: var(--ink); font-weight: 600; }
+.drill .empty { padding: 22px 14px; color: var(--muted); font-size: 13px; }
+
+.back-link { display: inline-block; margin: 0 0 10px; color: var(--muted); font-size: 12.5px; cursor: pointer; padding: 4px 8px; border-radius: 6px; }
+.back-link:hover { background: var(--hover); color: var(--ink); }
+
+/* ---------- Sample-data banner (spec / preview only) ---------- */
+.sample-banner {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 16px; margin: 0;
+  background: #fef3c7; color: #92400e;
+  border-bottom: 1px solid #fde68a;
+  font-size: 12.5px; font-weight: 500;
+}
+.sample-banner .tag { font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 11px; }
+
+/* ============================================================
+   Type scale (verbatim from SCGDesignSystem.jsx)
+   Rules: never below weight 400 (300 reserved); tabular-nums on
+   numeric data; eyebrows/KPI labels always uppercase; mono for
+   data identity only. Color hierarchy mirrors type hierarchy.
+   ============================================================ */
+:root {
+  --font-base: "Inter", -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "SF Mono", "Fira Code", ui-monospace, Menlo, Consolas, monospace;
+}
+.t-page    { font-size: 28px; font-weight: 700; letter-spacing: -0.02em;  line-height: 1.2;  color: var(--ink); }
+.t-section { font-size: 20px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.3;  color: var(--ink); }
+.t-card    { font-size: 16px; font-weight: 600; letter-spacing: -0.01em;  line-height: 1.4;  color: var(--ink); }
+.t-h1      { font-size: 24px; font-weight: 600; letter-spacing: -0.018em; line-height: 1.25; color: var(--ink); }
+.t-h2      { font-size: 18px; font-weight: 600; letter-spacing: -0.012em; line-height: 1.35; color: var(--ink); }
+.t-h3      { font-size: 15px; font-weight: 600; letter-spacing: -0.008em; line-height: 1.4;  color: var(--ink); }
+.t-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.08em;  line-height: 1.4;  text-transform: uppercase; color: var(--muted-2); }
+.t-kpi-label { font-size: 11px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted-2); }
+.t-kpi-lg  { font-size: 32px; font-weight: 600; letter-spacing: -0.03em;  line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ink); }
+.t-kpi-sm  { font-size: 24px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ink); }
+.t-body    { font-size: 14px; font-weight: 400; line-height: 1.65; color: var(--ink); }
+.t-body-sub { font-size: 14px; font-weight: 400; line-height: 1.65; color: var(--muted); }
+.t-caption { font-size: 12px; font-weight: 400; line-height: 1.6; color: var(--muted-2); }
+.t-label   { font-size: 12px; font-weight: 500; letter-spacing: 0.01em; line-height: 1.5; color: var(--ink); }
+.t-mono    { font-family: var(--font-mono); font-size: 13px; font-weight: 400; }
+
+/* ============================================================
+   Status badges (pill + leading dot). Fill+text pairs only.
+   ============================================================ */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  white-space: nowrap;
+}
+.badge .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; display: inline-block; flex-shrink: 0; }
+.badge--ontrack    { background: var(--green-fill);    color: var(--green-text); }
+.badge--atrisk     { background: var(--yellow-fill);   color: var(--yellow-text); }
+.badge--below      { background: var(--red-fill);      color: var(--red-text); }
+.badge--inreview   { background: var(--inreview-fill); color: var(--inreview-text); }
+.badge--inactive   { background: var(--inactive-fill); color: var(--inactive-text); }
+.badge--pending    { background: var(--orange-fill);   color: var(--orange-text); }
+.badge--escalated  { background: var(--purple-fill);   color: var(--purple-text); }
+
+/* Callout boxes: 3px left border in the semantic text color, soft fill */
+.callout { padding: 13px 16px; border-radius: var(--r-lg); border-left: 3px solid var(--border-strong); background: var(--surface-alt); }
+.callout .c-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+.callout .c-body  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.callout--info     { border-left-color: var(--starwood-blue); background: #EBF4FB; }
+.callout--info    .c-title { color: var(--navy); }
+.callout--success  { border-left-color: var(--green-text);  background: #EBF7EE; }
+.callout--success .c-title { color: var(--green-text); }
+.callout--warning  { border-left-color: var(--yellow-text); background: #FFFBEB; }
+.callout--warning .c-title { color: var(--yellow-text); }
+.callout--error    { border-left-color: var(--red-text);    background: #FEF2F2; }
+.callout--error   .c-title { color: var(--red-text); }
+
+/* ============================================================
+   App shell (topbar + sidebar) from the SCG spec
+   ============================================================ */
+.scg-topbar {
+  height: 56px; background: var(--surface); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px; flex-shrink: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.05); z-index: 100;
+}
+.scg-brand { display: flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+.scg-brand .mark { width: 30px; height: 30px; background: var(--navy); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+.scg-brand .wordmark { font-size: 13px; font-weight: 700; color: var(--navy); letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+.scg-crumb { display: flex; align-items: center; gap: 8px; }
+.scg-crumb .dash { font-size: 14px; font-weight: 600; color: var(--ink); }
+.scg-crumb .sep  { color: var(--muted-2); font-size: 13px; }
+.scg-crumb .page { font-size: 13px; color: var(--muted); }
+.scg-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--navy); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+
+.scg-sidebar { width: 220px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; }
+.scg-nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 9px 16px; cursor: pointer;
+  color: var(--muted); background: transparent; font-size: 13.5px; font-weight: 500;
+  border-right: 2px solid transparent; white-space: nowrap; user-select: none;
+  transition: background .12s, color .12s;
+}
+.scg-nav-item:hover { color: var(--ink); background: var(--surface-alt); }
+.scg-nav-item.active { color: var(--navy); background: var(--mist); font-weight: 600; border-right-color: var(--navy); }
+.scg-nav-item .ico { font-size: 15px; flex-shrink: 0; width: 20px; text-align: center; }
+
+/* Collapsible sidebar: toggle .collapsed on .scg-sidebar (persist the choice
+   in localStorage "scg_side"). Labels hide, the icon rail remains. The
+   toggle lives at the TOP of the sidebar in .scg-side-head: a to-bar arrow
+   pointing left (collapse), flipping right when collapsed. The icon swap is
+   pure CSS via .i-min/.i-max, so the app script only toggles the class. */
+.scg-side-head { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 10px 12px 6px; flex-shrink: 0; }
+.scg-sidebar.collapsed .scg-side-head { justify-content: center; padding: 10px 0 6px; }
+.scg-side-head .collapse-label { font-size: 12px; color: var(--muted-2); white-space: nowrap; user-select: none; }
+.scg-sidebar.collapsed .collapse-label { display: none; }
+.scg-collapse {
+  width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--muted);
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+}
+.scg-collapse:hover { background: var(--hover); color: var(--ink); border-color: var(--border-strong); }
+.scg-collapse .i-max { display: none; }
+.scg-sidebar.collapsed .scg-collapse .i-min { display: none; }
+.scg-sidebar.collapsed .scg-collapse .i-max { display: block; }
+.scg-sidebar { transition: width .15s ease; }
+.scg-sidebar .scg-nav { flex: 1 1 auto; overflow-y: auto; overflow-x: hidden; }
+.scg-sidebar.collapsed { width: 52px; }
+.scg-sidebar.collapsed .scg-nav-item span:not(.ico) { display: none; }
+.scg-sidebar.collapsed .scg-nav-item { justify-content: center; padding: 9px 0; }
+.scg-side-foot { border-top: 1px solid var(--border); padding: 8px 10px; display: flex; justify-content: flex-end; flex-shrink: 0; }
+.scg-sidebar.collapsed .scg-side-foot { justify-content: center; }
+.scg-side-foot button {
+  min-width: 28px; height: 28px; border-radius: 6px; font-size: 11px;
+  border: 1px solid var(--border); color: var(--muted); background: var(--surface); cursor: pointer;
+}
+.scg-side-foot button:hover { background: var(--hover); color: var(--ink); }
+
+/* ---------- Shell hardening (2026-07-21): the pieces every app was
+   hand-rolling, now specified once so dashboards render identically. ---------- */
+
+/* Brand and crumb sit together on the LEFT. Wrap them in .scg-left; the crumb
+   is never centered and nothing separates the logo from the dashboard name
+   (no divider line). The right cluster is .meta: data pill, avatar, toggle. */
+.scg-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.scg-topbar .meta { display: flex; align-items: center; gap: 8px; }
+
+/* Signed-in initials (top right): fill .scg-avatar from /.auth/me and unhide.
+   display on the base class would defeat the hidden attribute. */
+.scg-avatar[hidden] { display: none; }
+
+/* Theme toggle: one size and one icon set fleet-wide. A 28px boxed button;
+   moon icon in light mode, sun in dark. Scripts only flip the hidden
+   attribute on #tt-moon / #tt-sun. */
+.theme-btn {
+  width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--muted);
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+}
+.theme-btn:hover { background: var(--hover); color: var(--ink); border-color: var(--border-strong); }
+.theme-btn svg { display: block; }
+/* keep the hidden attribute working; display:block above would defeat it */
+.theme-btn svg[hidden] { display: none; }
+/* the moon/sun swap is pure CSS, keyed off html[data-theme]. Scripts only
+   need to set the theme attribute; SVG elements have no hidden IDL property,
+   so a script flipping .hidden on the icons would silently do nothing. */
+.theme-btn #tt-sun { display: none; }
+html[data-theme="dark"] .theme-btn #tt-sun { display: block; }
+html[data-theme="dark"] .theme-btn #tt-moon { display: none; }
+
+/* Sidebar rhythm: 8px of air under the collapse head, and nav items built as
+   <button> line up exactly with ones built as <div>. */
+.scg-sidebar .scg-nav { padding: 8px 0; }
+.scg-nav-item { line-height: 1.5; }
+button.scg-nav-item { width: 100%; border: 0; background: none; text-align: left; font-family: inherit; }
+
+/* ============================================================
+   Dark mode: overrides from the DARK token set. Because the
+   aliases below read the brand tokens, overriding the few base
+   values re-themes the whole system.
+   ============================================================ */
+html[data-theme="dark"] {
+  --bg: #1C1C1E;
+  --surface: #2C2C2E;
+  --surface-alt: #3A3A3C;
+  --hover: #3A3A3C;
+  --line: #3A3A3C;
+  --border: #3A3A3C;
+  --border-strong: #48484A;
+  --charcoal: #F2F2F7;
+  --ink: #F2F2F7;
+  --ink-2: #FFFFFF;
+  --slate: #AEAEB2;   --muted: #AEAEB2;
+  --mid-grey: #636366; --muted-2: #636366;
+  --pearl: #1C1C1E;
+  --white: #2C2C2E;
+  --navy: #74A9CE;    /* accent flips to Sky in dark */
+  --mist: #1A2F45;
+  --claude: var(--navy);
+  --claude-soft: var(--mist);
+  /* map geography (MapTab's DARK set) */
+  --land-fill: #2A3545;  --land-stroke: #3A4A5A;
+  --ocean-bg: #1A2535;   --graticule: #253040;
+}
+
+/* Dark pairs for badges and callouts (their light fills are literals, so the
+   token flip above cannot re-theme them). One source here; apps must not
+   carry their own copies. */
+html[data-theme="dark"] .badge--ontrack   { background: #14301B; color: #C6EFCE; }
+html[data-theme="dark"] .badge--atrisk    { background: #3A3115; color: #FFEB9C; }
+html[data-theme="dark"] .badge--below     { background: #3A181B; color: #FFC7CE; }
+html[data-theme="dark"] .badge--pending   { background: #3A3115; color: #FFEB9C; }
+html[data-theme="dark"] .badge--inactive  { background: var(--surface-alt); color: var(--muted); }
+html[data-theme="dark"] .badge--inreview  { background: var(--mist); color: var(--navy); }
+html[data-theme="dark"] .badge--escalated { background: #2A1638; color: #E2CBEF; }
+html[data-theme="dark"] .callout--info    { background: var(--mist); }
+html[data-theme="dark"] .callout--success { background: #14301B; border-left-color: #C6EFCE; }
+html[data-theme="dark"] .callout--success .c-title { color: #C6EFCE; }
+html[data-theme="dark"] .callout--warning { background: #3A3115; border-left-color: #FFEB9C; }
+html[data-theme="dark"] .callout--warning .c-title { color: #FFEB9C; }
+html[data-theme="dark"] .callout--error   { background: #3A181B; border-left-color: #FFC7CE; }
+html[data-theme="dark"] .callout--error .c-title { color: #FFC7CE; }
+
+/* ============================================================
+   Package notes (PackageNote / PkgTag from SCGDesignSystem.jsx).
+   Tag accent colors are per-package identity, same in both themes;
+   they arrive inline as 8-digit hex fills on .pkg-tag.
+   ============================================================ */
+.pkg-note {
+  display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap;
+  padding: 10px 14px; border-radius: var(--r); margin-bottom: 18px;
+  background: var(--surface-alt); border: 1px solid var(--border);
+  font-size: 12px; color: var(--muted); line-height: 1.5;
+}
+.pkg-note .tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.pkg-note .note { flex: 1; min-width: 200px; }
+.pkg-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 4px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+  font-family: var(--font-mono); white-space: nowrap;
+}
+
+/* ============================================================
+   Implementation code blocks: fixed dark canvas in both themes
+   (verbatim palette from the JSX snippet blocks).
+   ============================================================ */
+.code-block {
+  background: #1C1C1E; border-radius: var(--r-lg); padding: 18px 20px;
+  font-family: var(--font-mono); font-size: 12px; line-height: 1.8;
+  color: #F2F2F7; overflow-x: auto; white-space: pre;
+}
+.code-block .cm  { color: #636366; }
+.code-block .fn  { color: #FF9F0A; }
+.code-block .str { color: #30D158; }
+.code-block .n   { color: #64D2FF; }
+.code-title { font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.02em; }
+
+/* ============================================================
+   Map (MapTab): view toggle, D3 stage, pins, zoom, tooltip,
+   legend, Mapbox satellite placeholder. Geography reads the
+   --land/--ocean/--graticule tokens so themes re-color the map.
+   ============================================================ */
+.map-toggle { display: inline-flex; background: var(--surface-alt); border-radius: 8px; padding: 3px; gap: 2px; }
+.map-toggle button {
+  padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600;
+  color: var(--muted-2); white-space: nowrap;
+  transition: background .15s, color .15s, box-shadow .15s;
+}
+.map-toggle button.active { background: var(--surface); color: var(--navy); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.map-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; position: relative; }
+.map-stage { position: relative; }
+.map-svg { width: 100%; height: auto; display: block; cursor: grab; }
+.map-svg:active { cursor: grabbing; }
+.map-ocean { fill: var(--ocean-bg); }
+.map-ocean.us { fill: var(--surface-alt); }
+.map-land { fill: var(--land-fill); stroke: var(--land-stroke); }
+.map-grat { fill: none; stroke: var(--graticule); }
+.map-pin { cursor: pointer; }
+.map-pin .st-ontrack { fill: var(--green-text); }
+.map-pin .st-atrisk  { fill: var(--yellow-text); }
+.map-pin .st-below   { fill: var(--red-text); }
+.map-loading { height: 420px; display: flex; align-items: center; justify-content: center; color: var(--muted-2); font-size: 13px; }
+.map-zoom { position: absolute; bottom: 14px; right: 14px; display: flex; flex-direction: column; gap: 4px; z-index: 10; }
+.map-zoom button {
+  width: 30px; height: 30px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: var(--muted);
+}
+.map-zoom button:hover { background: var(--surface-alt); color: var(--ink); }
+.map-tip {
+  position: absolute; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 9px; padding: 11px 14px; box-shadow: var(--shadow-lg);
+  min-width: 185px; pointer-events: none; z-index: 50;
+}
+.map-legend { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.map-legend .li { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); font-weight: 500; }
+.map-legend .li .dot { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.15); flex-shrink: 0; }
+.map-sat {
+  height: 420px; position: relative; gap: 14px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: linear-gradient(160deg, #0D1F10 0%, #1A3020 35%, #0A1A28 65%, #050D18 100%);
+}
+.map-sat .grid-lines {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.map-sat .token-note {
+  margin-top: 4px; padding: 8px 14px; border-radius: 8px;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  font-size: 12px; color: rgba(255,255,255,0.5); font-family: var(--font-mono); z-index: 1;
+}
+
+/* ============================================================
+   Filters (FiltersTab): collapsible panel, chips, inputs
+   ============================================================ */
+.filter-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); box-shadow: var(--shadow-lg); width: 300px; }
+.filter-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; user-select: none; }
+.filter-head .ttl { font-size: 13px; font-weight: 600; color: var(--ink); }
+.filter-head .caret { font-size: 12px; color: var(--muted-2); display: inline-block; transition: transform .2s; }
+.filter-panel.open .filter-head { border-bottom: 1px solid var(--border); }
+.filter-panel.open .filter-head .caret { transform: rotate(180deg); }
+.filter-body { display: none; padding: 14px 16px; }
+.filter-panel.open .filter-body { display: block; }
+.filter-lbl { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 6px; }
+.filter-input, .filter-select {
+  width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: 7px;
+  background: var(--bg); color: var(--ink); font-size: 13px; font-family: inherit; outline: none;
+}
+.filter-select { appearance: none; cursor: pointer; }
+.filter-chip {
+  padding: 4px 11px; border-radius: 20px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--muted); font-size: 12px; font-weight: 500;
+  cursor: pointer; user-select: none; transition: background .12s, color .12s, border-color .12s;
+}
+.filter-chip:hover { background: var(--surface-alt); }
+.filter-chip.sel { border-color: var(--navy); background: var(--mist); color: var(--navy); }
+
+/* ============================================================
+   Misc (MiscTab): buttons, step indicator, two-step confirm.
+   Button text reads var(--surface) so navy/sky fills keep
+   contrast in both themes.
+   ============================================================ */
+.btn, .btn-navy { padding: 8px 16px; border-radius: 7px; background: var(--starwood-blue); color: #fff; font-size: 13px; font-weight: 600; }
+.btn:hover, .btn-navy:hover { background: #1E5288; color: #fff; } /* fixed hex: --navy flips to Sky in dark, too light for white text */
+.btn-quiet { padding: 8px 16px; border-radius: 7px; background: var(--surface-alt); color: var(--muted); font-size: 13px; font-weight: 600; border: 1px solid var(--border); }
+.btn-danger-soft { padding: 8px 16px; border-radius: 7px; background: var(--red-fill); color: var(--red-text); font-size: 13px; font-weight: 600; }
+.btn-danger { padding: 8px 16px; border-radius: 7px; background: var(--red-text); color: #fff; font-size: 13px; font-weight: 600; }
+.steps { display: flex; align-items: center; }
+.step { display: flex; align-items: center; flex: 1; }
+.step:last-child { flex: 0; }
+.step .node { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.step .dot { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+.step.done   .dot { background: var(--green-fill); color: var(--green-text); }
+.step.active .dot { background: var(--navy); color: var(--surface); }
+.step.pending .dot { background: var(--surface-alt); color: var(--muted-2); }
+.step .lbl { font-size: 11px; font-weight: 500; color: var(--muted); white-space: nowrap; }
+.step.active .lbl { color: var(--navy); }
+.step .line { flex: 1; height: 1.5px; background: var(--border); margin: 0 12px 20px; }
+.step .line.done { background: var(--green-fill); }
+.confirm-row { display: flex; gap: 10px; }
+.confirm-row[hidden] { display: none; }
+.confirm-dlg {
+  background: var(--surface); color: var(--ink); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 24px; max-width: 400px; box-shadow: var(--shadow-lg);
+}
+.confirm-dlg::backdrop { background: rgba(0,0,0,0.4); }
+
+.scg-brand .logo{height:26px;width:auto;display:block}
+main.scg-main-inner{max-width:1180px;margin:0 auto;padding:24px 28px 90px}
+.narrative{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;font-size:14px;color:var(--ink);line-height:1.6}
+.narrative p{margin:0 0 10px}.narrative p:last-child{margin:0}
+/* --- summary tab --- */
+.sum-hero{background:var(--navy);color:#fff;border-radius:var(--r);padding:22px 24px;margin-bottom:18px}
+[data-theme="dark"] .sum-hero{background:linear-gradient(180deg,#16305f,#0f2547);border:1px solid var(--border)}
+.sum-hero .verdict-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sky);margin-bottom:8px}
+.sum-hero h2{font-size:20px;line-height:1.35;margin:0 0 10px;color:#fff}
+.sum-hero p{margin:0;font-size:13.5px;line-height:1.6;color:#d7e3f2}
+.sum-findings{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+@media(max-width:760px){.sum-findings{grid-template-columns:1fr}}
+.finding{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;position:relative}
+.finding .f-head{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.finding .f-icon{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;color:#fff}
+.finding h3{font-size:14px;margin:0;color:var(--ink);font-weight:650}
+.finding .f-body{font-size:12.5px;color:var(--muted);line-height:1.55}
+.finding .f-body b{color:var(--ink);font-weight:600}
+.finding .f-link{margin-top:9px;font-size:11.5px;font-weight:600;color:var(--starwood-blue);cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.finding .f-link:hover{text-decoration:underline}
+.sum-verdict-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-left:8px;vertical-align:middle}
+.sum-verdict-tag.mixed{background:#9C570022;color:#9C5700}
+[data-theme="dark"] .sum-verdict-tag.mixed{background:#9C570033;color:#e0a24a}
+.tl-item{display:grid;grid-template-columns:96px 1fr;gap:0;border-top:1px solid var(--border)}
+.tl-item:last-child{border-bottom:1px solid var(--border)}
+.tl-date{padding:14px 14px 14px 0;border-right:2px solid var(--border)}
+.tl-q{font-weight:600;font-size:13px;font-variant-numeric:tabular-nums}
+.tl-body{padding:14px 0 14px 18px;font-size:13.5px;color:var(--ink);line-height:1.55}
+.tag{display:inline-block;margin-top:6px;font-size:10px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:999px}
+.smchart{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 16px 12px}
+.smchart .sm-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px}
+.smchart h3{margin:0;font-size:15px;font-weight:600}
+.smchart .sm-sub{font-size:11px;color:var(--muted);font-weight:400}
+.smchart .sm-cap{font-size:11px;color:var(--muted);margin-bottom:8px;font-variant-numeric:tabular-nums}
+.smchart .sm-comment{font-size:12px;color:var(--ink);line-height:1.5;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.smchart .sm-airead{font-size:12px;color:var(--muted);line-height:1.5;margin-top:8px}
+.smchart .sm-airead .airead-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--starwood-blue);background:var(--mist);border-radius:4px;padding:1px 6px;margin-right:6px;vertical-align:middle}
+svg.viz{width:100%;height:auto;display:block;overflow:visible}
+.axlab{font-size:9px;fill:var(--muted-2);font-variant-numeric:tabular-nums}
+.tip{position:fixed;pointer-events:none;background:var(--navy);color:#fff;padding:8px 11px;font-size:11px;line-height:1.5;border-radius:var(--r-sm);opacity:0;transition:opacity .12s;z-index:60;box-shadow:var(--shadow-lg);font-variant-numeric:tabular-nums}
+.tip b{color:#C2DCF2}
+.legend-row{display:flex;gap:18px;flex-wrap:wrap;margin:0 0 10px 2px}
+.legend-row span{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.lg-sw{width:14px;height:3px;border-radius:2px;display:inline-block}.lg-sw.dot{width:8px;height:8px;border-radius:50%}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums;margin-top:8px}
+.tbl th{text-align:right;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--border-strong);background:var(--surface-alt)}
+.tbl th:first-child{text-align:left}
+.tbl td{text-align:right;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--ink)}
+.tbl td:first-child{text-align:left;font-weight:600}
+.tbl tr:last-child td{border-bottom:none}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.tabs.scg-tabs{position:static;margin:0 0 4px;padding:0;flex-wrap:wrap}
+.sent-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:0;overflow:hidden;margin-bottom:14px}
+.sent-head{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--border);background:var(--surface-alt)}
+.sent-q{font-weight:700;font-size:15px;font-variant-numeric:tabular-nums;min-width:64px}
+.sent-headline{font-size:14px;font-weight:600;color:var(--ink);flex:1}
+.sent-body{padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.sent-block .sb-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:5px}
+.sent-block p{font-size:13px;color:var(--ink);line-height:1.55;margin:0}
+.sent-block.client{grid-column:1/-1;border-top:1px dashed var(--border);padding-top:12px}
+@media(max-width:820px){.sent-body{grid-template-columns:1fr}}
+.freq-toggle{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.freq-btn{padding:6px 14px;border-radius:999px;border:1px solid var(--border);background:var(--surface-alt);font-size:12px;font-weight:500;color:var(--muted);cursor:pointer}
+.freq-btn.active{background:var(--starwood-blue);color:#fff;border-color:var(--starwood-blue)}
+</style>
+</head>
+<body>
+<div class="topbar scg-topbar">
+  <div class="scg-left">
+    <div class="scg-brand"><svg class="logo" height="275.992527" viewBox="-2 -2 398.1 302.9" width="362.328651" xmlns="http://www.w3.org/2000/svg"><path d="m0 0h383.6v248.2h-383.6z" fill="#fff"></path><g fill="#016bab"><path d="m101.8 208q-.5-1.2-.9 0l-4.9 15.2c-.1.3 0 .4.1.4h10.8c.3 0 .3-.1.2-.4z"></path><path d="m252.2 200.8c-9.5 0-16.5 6.2-16.5 18.6s7.9 21.6 18 21.6c5.1 0 15.6-3 15.6-19.4 0-13.5-8.2-20.8-17.1-20.8z"></path><path d="m303.8 200.8c-9.5 0-16.5 6.2-16.5 18.6s7.9 21.6 18 21.6c5.1 0 15.6-3 15.6-19.4 0-13.5-8.2-20.8-17.1-20.8z"></path><path d="m141.1 201.5a14.7 14.7 0 0 0 -3.7.3.8.8 0 0 0 -.5.7v18.4a.8.8 0 0 0 .4.7c.8.5 3.4.9 5.9.9a7.2 7.2 0 0 0 4.2-1.1c2-1.3 3.5-4.4 3.5-8.6 0-7.1-3.7-11.3-9.8-11.3z"></path><path d="m347.4 201.6a17.3 17.3 0 0 0 -3.7.4c-.5.2-.6.5-.6 1.1s-.1 7.7-.1 12v7c0 6 .1 11.2.1 12.3s.2 3.6.6 4.2 3 2.3 9.6 2.3a18.8 18.8 0 0 0 13.4-5.2c3-2.9 4.6-8.3 4.6-13.5a19.6 19.6 0 0 0 -5.5-14.2c-5.3-5.6-11.7-6.4-18.4-6.4z"></path><path d="m0 68.5v-23.8l46.2 12.6 37.6-57.3h-83.8v127.6l21.3-32.5z"></path><path d="m86.4 0 3.4 69.2 70.6 19.3-68.4 25.9 3.6 73.3-45.9-57.3-49.7 18.8v106.3h394.1v-255.5zm-49.6 240.7a14.8 14.8 0 0 1 -8.5 2.4 17.8 17.8 0 0 1 -7.6-1.5c-.7-.4-.8-.6-.8-2.2a55.9 55.9 0 0 1 .3-5.9c0-.7.2-1 .4-1s.4.2.4.7a8.6 8.6 0 0 0 .2 2.1c.8 4.1 4.6 5.7 8.3 5.7 5.5 0 8.1-3.9 8.1-7.5s-1.6-6.1-6.5-10.1l-2.5-2.1c-6-4.9-7.4-8.4-7.4-12.3 0-6 4.6-10.1 11.7-10.1a25 25 0 0 1 5.3.5 5.7 5.7 0 0 0 1.9.3c.5 0 .6.1.6.4s-.2 2.2-.2 6c0 .9-.1 1.3-.4 1.3s-.4-.3-.5-.7a10.2 10.2 0 0 0 -.7-2.9c-.3-.6-1.9-2.9-7-2.9s-7 2.4-7 6.5 1.6 5.1 6.9 9.5l1.6 1.2c6.6 5.3 8.2 8.8 8.2 13.3a11.5 11.5 0 0 1 -4.8 9.3zm32-2.5c.2 1.6.5 2.9 2.2 3.1l2.5.2c.4 0 .5.2.5.4s-.3.4-.9.4l-7-.2-5.5.2c-.6 0-.9-.1-.9-.4s.1-.4.5-.4l1.7-.2c1.1-.2 1.4-1.5 1.6-3.1s.3-6.8.3-12.2v-23.9h-8.4c-3.5.1-4.8.5-5.7 1.8l-1 1.8c-.2.4-.3.5-.6.5s-.2-.1-.2-.5 1.1-5.4 1.2-5.8.3-1.1.6-1.1a15.1 15.1 0 0 0 2.5.7l4.4.2h21.1a29.1 29.1 0 0 0 5.6-.5c.3 0 .3.3.3.7s-.2 5.5-.2 6.2-.1.7-.4.7-.3-.2-.4-1v-.6c-.2-1.7-1.5-3-6.9-3.1h-7.2v23.9c0 5.4 0 9.8.3 12.2zm54.4 4.1h-8.9c-1-.1-1.6-.1-1.6-.4s.1-.3.4-.4.6-.6.3-1.5l-5.3-14a.5.5 0 0 0 -.5-.3h-12.1c-.3 0-.4.1-.5.4l-3.4 10a12.3 12.3 0 0 0 -.8 3.8c0 1.1 1.2 1.6 2.1 1.6h.6c.4 0 .5.1.5.4s-.3.4-.8.4l-4.4-.2-6.4.2c-.7 0-1-.1-1-.4s.2-.4.5-.4h1.6c2.6-.3 3.7-2.5 4.7-5.3l12.8-35c.7-1.9.9-2.2 1.3-2.2s.5.3 1.2 2 9.7 25.4 13.2 34c2 5 3.6 5.9 4.8 6.3a6.9 6.9 0 0 0 2.3.3c.3 0 .5.1.5.4s-.5.3-1.1.3zm45.6 0h-4c-3.2 0-4.6-.3-6.1-1.1s-4.4-4-7.6-8.3-5-6.8-6.1-8.3a1.1 1.1 0 0 0 -.8-.3h-6.9c-.3 0-.4.1-.4.4v1.3c0 5.4 0 9.8.3 12.2s.5 2.9 2.2 3.1l2.5.2c.4 0 .5.2.5.4s-.3.4-.9.4l-7-.2-5.3.2c-.6 0-.9-.1-.9-.4s.1-.4.5-.4l1.7-.2c1.1-.2 1.4-1.5 1.6-3.1s.3-6.8.3-12.2v-10c0-8.8 0-10.3-.1-12.2s-.6-2.8-2.4-3.2h-2a.4.4 0 0 1 -.4-.4c0-.3.3-.4.9-.4h13c3.6 0 7.3.3 10.3 2.5a9.7 9.7 0 0 1 3.9 7.6c0 4.2-1.7 8.4-6.8 13.1 4.6 5.9 8.5 10.9 11.7 14.4s5.5 3.8 6.9 4l2.2.2a.5.5 0 0 1 .5.4c0 .2-.3.3-1.3.3zm58.3-41.8a8.3 8.3 0 0 0 -2 .2c-1.6.7-2.5 3-3.6 6.1-2.5 7.2-8.2 25.1-10.4 31.4-1.5 4.2-1.7 4.9-2.4 4.9s-.9-.7-1.7-2.9l-11-31.4h-.1c-2 5.4-9.8 26.1-11.8 31.3-.9 2.4-1.2 3-1.9 3s-.8-.6-1.9-4.5l-10.1-33.4c-.9-3-1.6-3.8-3.1-4.4a8 8 0 0 0 -2.5-.3c-.3 0-.5-.1-.5-.4s.3-.4.9-.4h12.4c.8 0 1.1.1 1.1.4s-.3.4-.6.4a6.1 6.1 0 0 0 -2.2.3 1.6 1.6 0 0 0 -.7 1.4 51.5 51.5 0 0 0 1 5.1c.9 3.7 6.7 24.4 7.6 27.3h.1l12-32.1c.8-2.3 1-2.6 1.4-2.6s.7.7 1.4 2.7l11.2 31.9h.2c1.5-5.2 6.7-21.5 8.7-28.7a11.2 11.2 0 0 0 .6-3.6c0-1.1-.6-1.7-3.2-1.7a.5.5 0 0 1 -.5-.4c0-.3.3-.4 1-.4h10.3c.5 0 .8.1.8.3a.5.5 0 0 1 -.5.5zm25.1 42.6c-15.4 0-21.9-12-21.9-22.2s6.7-22 22.3-22c12.6 0 22.1 8 22.1 21.1s-8.9 23.1-22.5 23.1zm51.6 0c-15.4 0-21.9-12-21.9-22.2s6.7-22 22.2-22c12.7 0 22.2 8 22.2 21.1s-8.9 23.1-22.5 23.1zm66.4-6.8c-2.4 2.6-7.5 6.5-17 6.5-4.9 0-12-.7-12.6-.7l-5.5.2c-.6 0-.9-.1-.9-.4s.1-.4.5-.4l1.7-.2c1.1-.2 1.4-1.5 1.6-3.1s.3-6.8.3-12.2v-10c0-8.8 0-10.3-.1-12.2s-.6-2.8-2.5-3.2h-1.9a.4.4 0 0 1 -.4-.4c0-.3.2-.4.9-.4h13.9c5.6 0 16-.5 22.7 6.4a20.1 20.1 0 0 1 5.4 14.3 22.8 22.8 0 0 1 -6.1 15.8z"></path></g><path d="m39.5 291.8c-.2 0-.2.1-.3.5a6.5 6.5 0 0 1 -1.4 3.1c-1.4 1.5-3.6 1.8-6.4 1.8a13.2 13.2 0 0 1 -13.2-13.4c0-3.7.6-7 3.3-9.6s3.5-2.7 8.4-2.7c3.3 0 6.1 1 7.4 2.1a5.3 5.3 0 0 1 1.5 3.8c0 .5.1.7.3.7s.3-.2.3-.7.1-2.6.1-3.8.2-1.8.2-2.1 0-.3-.4-.4a28.4 28.4 0 0 1 -3.8-.5 34.9 34.9 0 0 0 -5.3-.5c-5.7 0-9 1.8-11.2 4a15 15 0 0 0 .3 20.9c2.9 2.6 6.6 3.9 12.1 3.9a20.5 20.5 0 0 0 6.6-.8c.7-.3.8-.4 1-1.1a30.5 30.5 0 0 0 .8-4.7c0-.3-.1-.5-.3-.5z"></path><path d="m72.4 297.9a4.1 4.1 0 0 1 -1.5-.2c-.8-.2-1.8-.8-3.2-4.1-2.2-5.6-8-20.7-8.5-22.1s-.6-1.4-.8-1.4-.4.3-.8 1.5l-8.4 22.8c-.6 1.8-1.4 3.2-3 3.4h-1.1c-.2 0-.3.1-.3.2s.2.3.7.3h7c.3 0 .5-.1.5-.3s-.1-.2-.3-.2h-.4c-.6 0-1.4-.3-1.4-1.1a8.6 8.6 0 0 1 .5-2.4l2.2-6.5c.1-.2.2-.3.4-.3h7.9l.3.2 3.4 9c.2.6 0 1-.2 1s-.3.1-.3.3.4.2 1.1.2h5.8c.4 0 .7-.1.7-.3s-.1 0-.3 0zm-11-11.6h-7c-.1 0-.2-.1-.1-.3l3.2-9.9c.2-.6.4-.6.5 0l3.5 9.9c.1.2.1.3-.1.3z"></path><path d="m87.8 270.7h-8.8c-.4 0-.6 0-.6.3s.2.2.3.2h1.3c1.2.2 1.5.8 1.5 2.1s.1 2.2.1 7.9v6.5c0 3.5 0 6.4-.2 7.9s-.3 1.9-1 2.1h-1.1c-.3 0-.3.1-.3.2s.2.3.6.3h8q.6 0 .6-.3c0-.1-.1-.2-.3-.2h-1.7c-1.1-.2-1.3-1-1.4-2.1s-.2-4.4-.2-7.9v-15c0-.4.1-.6.3-.7a3.7 3.7 0 0 1 1.6-.2 6.2 6.2 0 0 1 5 1.8 7.6 7.6 0 0 1 2.1 5.6 6.1 6.1 0 0 1 -6.4 6c-.7 0-1 .1-1 .4l.4.2h.8c5.2 0 9-3.6 9-8.8a6.2 6.2 0 0 0 -1.8-4.3c-.6-.5-2.2-2-6.8-2z"></path><path d="m114.6 297.9h-1.6c-1.1-.2-1.4-1-1.5-2.1s-.2-4.4-.2-7.9v-6.5c0-5.7 0-6.7.1-7.9s.4-1.9 1.4-2.1h.9c.1 0 .3-.1.3-.2s-.2-.3-.6-.3h-7.3c-.4 0-.6 0-.6.3s.2.2.3.2h1.1c.8.2 1.2.8 1.3 2.1s.1 2.2.1 7.9v6.5c0 3.5 0 6.4-.2 7.9s-.4 1.9-1.1 2.1h-1.1c-.2 0-.3.1-.3.2s.2.3.6.3h8.1q.6 0 .6-.3c0-.1-.1-.2-.3-.2z"></path><path d="m145.6 270.4-1.1.2-2.6.2h-13.7l-2.9-.2a9.4 9.4 0 0 1 -1.7-.5c-.1 0-.3.5-.3.7s-.8 3.5-.8 3.9 0 .3.2.3.2-.1.3-.4a6.7 6.7 0 0 1 .6-1.1c.6-.9 1.5-1.2 3.8-1.2h5.4v15.6c0 3.5 0 6.4-.2 7.9s-.3 1.9-1 2.1h-1.1c-.3 0-.3.1-.3.2s.2.3.6.3h8.1q.6 0 .6-.3c0-.1-.1-.2-.3-.2h-1.7c-1.1-.2-1.3-1-1.4-2.1s-.2-4.4-.2-7.9v-15.7h4.6c3.6.1 4.4.9 4.5 2v.4c0 .5.1.7.3.7s.2-.2.2-.5.1-3 .1-4.1.1-.3 0-.3z"></path><path d="m175.5 297.9a3.9 3.9 0 0 1 -1.4-.2c-.8-.2-1.9-.8-3.2-4.1-2.2-5.6-8-20.7-8.5-22.1s-.6-1.4-.8-1.4-.4.3-.8 1.5l-8.4 22.8c-.6 1.8-1.4 3.2-3.1 3.4h-1c-.2 0-.4.1-.4.2s.3.3.7.3h7.1c.3 0 .5-.1.5-.3s-.1-.2-.4-.2h-.3c-.7 0-1.4-.3-1.4-1.1a8.6 8.6 0 0 1 .5-2.4l2.2-6.5c.1-.2.2-.3.4-.3h7.8l.4.2 3.4 9c.2.6 0 1-.2 1s-.3.1-.3.3.4.2 1.1.2h5.8c.4 0 .7-.1.7-.3s-.1 0-.4 0zm-10.9-11.6h-7c-.2 0-.2-.1-.2-.3l3.3-9.9c.2-.6.3-.6.5 0l3.5 9.9c.1.2.1.3-.1.3z"></path><path d="m198.9 293.3c-.3 0-.3.2-.4.5a6 6 0 0 1 -.9 2.2c-.9 1.1-2.5 1.1-4.5 1.1s-3.8-.3-4.4-.9-.8-3-.8-8.4v-6.5c0-5.7 0-6.7.1-7.9s.4-1.9 1.4-2.1h1.2c.2 0 .3-.1.3-.2s-.2-.3-.6-.3h-8.1c-.4 0-.6 0-.6.3s.2.2.3.2h1.3c1.2.2 1.5.8 1.6 2.1v14.4c0 3.5 0 6.4-.2 7.9s-.3 1.9-1 2.1h-1.1c-.2 0-.3.1-.3.2s.2.3.6.3h13.4c2 0 2.1-.1 2.3-1a22.2 22.2 0 0 0 .6-3.6c0-.2-.1-.4-.2-.4z"></path><path d="m248.4 284.6-3.6.2-4.2-.2q-.6 0-.6.3a.3.3 0 0 0 .3.3h1.3c1.5.4 1.6.8 1.6 3.8v6.2a1.4 1.4 0 0 1 -.7 1.3 11.2 11.2 0 0 1 -4.2.7 13.4 13.4 0 0 1 -9.6-3.9 14.7 14.7 0 0 1 -3.9-10.1c0-4.3 1.5-7.7 3.6-9.4a11.9 11.9 0 0 1 7.9-2.4c4.7 0 7.7 1.6 8.6 3a4.8 4.8 0 0 1 .8 2.4c0 .3.1.6.3.6s.3-.2.3-.8c0-3.7.2-4.7.2-5.2s0-.3-.4-.4a14.5 14.5 0 0 1 -3-.3 25.7 25.7 0 0 0 -5.6-.7 17.9 17.9 0 0 0 -9.8 2.4 13.9 13.9 0 0 0 -6.1 12c0 4.6 2.1 8.6 4.4 10.5 4.1 3.6 9.3 3.9 12.1 3.9a18.4 18.4 0 0 0 7.7-1.6c.5-.3.5-.4.5-2v-4.1c0-1.6 0-2.7.1-3.8s.4-1.9 1.4-2.1h.9a.3.3 0 0 0 .3-.3q0-.3-.6-.3z"></path><path d="m285.3 297.9h-1.4a8.2 8.2 0 0 1 -4.5-2.7c-2.1-2.2-4.6-5.5-7.6-9.4 3.3-3 4.4-5.7 4.4-8.4a6.3 6.3 0 0 0 -2.5-5c-2-1.4-4.4-1.6-6.8-1.6h-8.4c-.4 0-.6 0-.6.3s.1.2.3.2h1.2c1.2.2 1.5.8 1.6 2.1s.1 2.2.1 7.9v6.5c0 3.5 0 6.4-.2 7.9s-.3 1.9-1.1 2.1h-1.1c-.2 0-.3.1-.3.2s.2.3.6.3h8q.6 0 .6-.3c0-.1-.1-.2-.3-.2h-1.7c-1.1-.2-1.3-1-1.4-2.1s-.2-4.4-.2-7.9v-.9a.3.3 0 0 1 .3-.3h4.5a.6.6 0 0 1 .5.2c.7.9 2.4 3.4 4 5.4s3.3 4.6 4.9 5.4a7.7 7.7 0 0 0 3.9.7h2.7c.6 0 .8-.1.8-.3s-.1-.1-.3-.1zm-14.4-13.1a4.9 4.9 0 0 1 -2.8.7c-1.6 0-3.3-.2-3.8-.6s-.3-.2-.3-.4v-12c0-.2.1-.4.3-.4a7.3 7.3 0 0 1 2.5-.3c3.9 0 6.3 2.8 6.3 7.4 0 2.8-.9 4.7-2.2 5.6z"></path><path d="m303.3 270.1c-10.2 0-14.5 8.5-14.5 14.4s4.2 14.4 14.2 14.4 14.7-6.8 14.7-15-6.2-13.8-14.4-13.8zm.7 27.4c-6.6 0-11.7-5.5-11.7-14s4.6-12.1 10.7-12.1 11.2 4.7 11.2 13.5c0 10.7-6.9 12.6-10.2 12.6z"></path><path d="m351.9 270.7h-7c-.4 0-.6 0-.6.3s.1.2.3.2h1.2c1.2.2 1.5.8 1.6 2.1s.1 2.2.1 7.9v4.6c0 3.8-.5 6.9-2.1 9a7.9 7.9 0 0 1 -5.8 2.6 7.2 7.2 0 0 1 -5.6-2c-1.5-1.5-2.7-3.8-2.7-9.1v-5.1c0-5.7 0-6.7.1-7.9s.3-2 1.3-2.1h.9c.2 0 .3-.1.3-.2s-.1-.3-.5-.3h-7.9c-.4 0-.6 0-.6.3s.2.2.3.2h1.2c1.3.2 1.6.8 1.6 2.1s.1 2.2.1 7.9v5.4c0 5.3 1.4 7.9 3.2 9.6s6.3 2.6 7.6 2.6a10.4 10.4 0 0 0 7.5-2.7c3-2.6 3.4-7 3.4-11v-3.9c0-5.7 0-6.7.1-7.9s.3-1.9 1.3-2.1h.9c.2 0 .3-.1.3-.2s-.1-.3-.5-.3z"></path><path d="m370.5 270.7h-8.7c-.4 0-.6 0-.6.3s.1.2.3.2h1.2c1.2.2 1.5.8 1.6 2.1s.1 2.2.1 7.9v6.5c0 3.5 0 6.4-.2 7.9s-.3 1.9-1.1 2.1h-1.1c-.2 0-.3.1-.3.2s.2.3.6.3h8.1c.4 0 .5-.1.5-.3s0-.2-.3-.2h-1.6c-1.1-.2-1.3-1-1.4-2.1s-.2-4.4-.2-7.9v-15c0-.4.1-.6.3-.7a3.4 3.4 0 0 1 1.6-.2 6.3 6.3 0 0 1 5 1.8 7.8 7.8 0 0 1 2 5.6 6.1 6.1 0 0 1 -6.3 6c-.8 0-1 .1-1 .4l.4.2h.8c5.2 0 9-3.6 9-8.8a6.2 6.2 0 0 0 -1.8-4.3c-.6-.5-2.3-2-6.9-2z"></path></svg></div>
+    <div class="scg-crumb"><span class="dash">Hiring Canary</span><span class="sep">/</span><span class="page" id="crumb">Overview</span></div>
+  </div>
+  <div class="meta">
+    <span class="badge badge--ontrack"><span class="dot"></span>Data through 2026-06-30</span>
+    <button class="theme-btn" id="theme-btn" type="button" aria-label="Toggle color theme">
+      <svg id="tt-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 0 1 9.5 3.5a8.5 8.5 0 1 0 11 11Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      <svg id="tt-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.5" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M18.7 5.3l-2.1 2.1M7.4 16.6l-2.1 2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</div>
+<main class="scg-main-inner">
+  <div class="data-note">Data through 2026-06-30. Group figures standardized; country and specialization detail from quarterly interim reports; sentiment from earnings-call transcripts.</div>
+  <div class="page-header">
+    <h1>Randstad: Public Recruiters as a Hiring Canary</h1>
+    <p>The world's largest staffing firm. Group trajectory, country detail back to 2019, the specialization split, how management's language has shifted, and what clients are saying about hiring in the age of AI.</p>
+  </div>
+  <div class="tabs scg-tabs" id="tabs">
+    <div class="tab active" data-tab="overview">Summary</div>
+    <div class="tab" data-tab="country">By Country</div>
+    <div class="tab" data-tab="spec">By Specialization</div>
+    <div class="tab" data-tab="sentiment">Company Sentiment</div>
+    <div class="tab" data-tab="ai">AI &amp; Client Demand</div>
+  </div>
+  <section class="tab-panel active" data-panel="overview">
+    <div class="sum-hero">
+      <div class="verdict-label">The Bottom Line</div>
+      <h2 id="sum-headline"></h2>
+      <p id="sum-sub"></p>
+    </div>
+    <div class="section-title"><h2>Key findings</h2><span class="sub">Five reads from the data. Each links to the detail.</span></div>
+    <div class="sum-findings" id="sum-findings"></div>
+    <div class="section-title"><h2>Group trajectory</h2><span class="sub">The one chart that frames everything: 30 quarters of net fees, fully continuous. EUR millions.</span></div>
+    <div class="chart">
+      <div class="legend-row"><span><i class="lg-sw" style="background:#122F67"></i>Gross profit (net fees)</span><span><i class="lg-sw" style="background:#74A9CE"></i>Operating income</span><span><i class="lg-sw dot" style="background:#2869A9"></i>Commentary point</span></div>
+      <div id="groupchart"></div>
+    </div>
+    <div class="section-title"><h2>The through-line</h2><span class="sub">Peak, trough, recovery, and what management said at each turn.</span></div>
+    <div id="timeline"></div>
+  </section>
+  <section class="tab-panel" data-panel="country">
+    <div class="section-title"><h2>By country</h2><span class="sub">Half-yearly revenue bars (Q2 and Q4) with EBITA-margin line, Q2 2019 to Q2 2026, plus YoY growth. Each with its narrative arc.</span></div>
+    <div class="callout callout--info" style="margin-bottom:14px"><div class="c-title">Every reported period back to 2019</div><div class="c-body">Randstad only discloses absolute revenue and per-country margin in its half-year (Q2) and full-year (Q4) reports; Q1 and Q3 give growth rates only, so the series steps twice a year. Dark bars are Q2, light bars Q4; the line is EBITA margin (right axis). Hover any bar for revenue, margin, and organic YoY. Note Germany was already weak in 2019, well before the AI era. The last two panels are regional aggregates (Asia Pacific; Other Europe &amp; Latin America) and only run from Q2 2023, the span on which those buckets are consistently defined.</div></div>
+    <div class="grid2" id="countrygrid"></div>
+  </section>
+  <section class="tab-panel" data-panel="spec">
+    <div class="section-title"><h2>By specialization, each quarter</h2><span class="sub">Every quarter since the segmentation changed. Q1 2023 to Q2 2026. EUR m revenue.</span></div>
+    <div class="callout callout--warning" style="margin-bottom:14px"><div class="c-title">The AI-exposure test, one chart per specialization</div><div class="c-body">Operational is temp and volume hiring. Professional is permanent white-collar. Digital is tech and IT talent. Enterprise is large managed accounts. Professional and Digital are the most exposed to AI substitution. Each chart is followed by its narrative arc and an AI read drawn from the earnings calls. Series on the current four-category definition; 2023 quarters are restated comparatives.</div></div>
+    <div class="grid2" id="specgrid"></div>
+    <div class="chart" style="min-height:auto;margin-top:16px;padding:16px 18px"><div style="font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600">All specializations, revenue by quarter (EUR m)</div><div id="spectable"></div></div>
+  </section>
+  <section class="tab-panel" data-panel="sentiment">
+    <div class="section-title"><h2>Company sentiment over time</h2><span class="sub">What management says on the calls, and how often.</span></div>
+    <div class="callout callout--info" style="margin-bottom:14px"><div class="c-title">Word and industry frequency</div><div class="c-body">How often management uses specific terms on the Q2 earnings call each year, from 2019 through 2026. Toggle between AI/technology terms, industries, and tone words. Every one of the eight calls was read in full and the terms hand-counted, so read the direction and shape of each line as the signal rather than the exact integer.</div></div>
+    <div class="chart" style="min-height:auto;padding:18px 20px;margin-bottom:16px">
+      <div class="freq-toggle" id="freqtoggle"></div>
+      <div class="legend-row" id="freqlegend"></div>
+      <div id="freqchart"></div>
+    </div>
+    <div class="callout callout--info" style="margin-bottom:16px"><div class="c-title">What the frequencies show</div><div class="c-body" id="freqreading"></div></div>
+    <div class="section-title"><h2>Quarter by quarter</h2><span class="sub">Tone, business read, and client signal.</span></div>
+    <div id="sentlist"></div>
+  </section>
+  <section class="tab-panel" data-panel="ai">
+    <div class="section-title"><h2>AI and client demand</h2><span class="sub">How clients are changing hiring, and whether AI is behind it.</span></div>
+    <div class="callout callout--warning" style="margin-bottom:14px"><div class="c-title">The real canary question</div><div class="c-body">Not whether Randstad uses AI internally, but whether its clients are hiring differently because of AI: fewer permanent or entry roles, substitution away from certain talent, or shifts in what skills they want.</div></div>
+    <div id="aitimeline"></div>
+    <div class="section-title"><h2>Verdict</h2><span class="sub">What the data says.</span></div>
+    <div class="narrative" id="verdict"></div>
+  </section>
+</main>
+<div class="tip" id="tip"></div>
+
+<script>
+const DATA = {"group": {"id": 4996, "name": "Randstad", "ticker": "RAND", "country": "NL", "currency": "EUR", "type": "Staffing", "reporting": "quarterly", "fee_metric": "gross_profit", "quarters": [{"q": "Q1 2019", "rev": 5718, "gp": 1128, "oi": 188, "ni": 133}, {"q": "Q2 2019", "rev": 5957, "gp": 1193, "oi": 238, "ni": 166}, {"q": "Q3 2019", "rev": 6006, "gp": 1203, "oi": 203, "ni": 140}, {"q": "Q4 2019", "rev": 5995, "gp": 1181, "oi": 230, "ni": 167}, {"q": "Q1 2020", "rev": 5414, "gp": 1049, "oi": 81, "ni": 49}, {"q": "Q2 2020", "rev": 4437, "gp": 829, "oi": -69, "ni": -57}, {"q": "Q3 2020", "rev": 5174, "gp": 974, "oi": 157, "ni": 104}, {"q": "Q4 2020", "rev": 5693, "gp": 1096, "oi": 215, "ni": 208}, {"q": "Q1 2021", "rev": 5528, "gp": 1059, "oi": 215, "ni": 153}, {"q": "Q2 2021", "rev": 6078, "gp": 1182, "oi": 239, "ni": 176}, {"q": "Q3 2021", "rev": 6275, "gp": 1251, "oi": 270, "ni": 199}, {"q": "Q4 2021", "rev": 6754, "gp": 1404, "oi": 309, "ni": 240}, {"q": "Q1 2022", "rev": 6621, "gp": 1360, "oi": 276, "ni": 209}, {"q": "Q2 2022", "rev": 6886, "gp": 1456, "oi": 260, "ni": 196}, {"q": "Q3 2022", "rev": 7054, "gp": 1479, "oi": 316, "ni": 230}, {"q": "Q4 2022", "rev": 7007, "gp": 1456, "oi": 285, "ni": 294}, {"q": "Q1 2023", "rev": 6518, "gp": 1368, "oi": 218, "ni": 154}, {"q": "Q2 2023", "rev": 6465, "gp": 1337, "oi": 206, "ni": 137}, {"q": "Q3 2023", "rev": 6260, "gp": 1293, "oi": 245, "ni": 170}, {"q": "Q4 2023", "rev": 6183, "gp": 1280, "oi": 162, "ni": 163}, {"q": "Q1 2024", "rev": 5938, "gp": 1197, "oi": 126, "ni": 88}, {"q": "Q2 2024", "rev": 6085, "gp": 1198, "oi": 125, "ni": 78}, {"q": "Q3 2024", "rev": 6015, "gp": 1168, "oi": 167, "ni": 106}, {"q": "Q4 2024", "rev": 6084, "gp": 1138, "oi": -13, "ni": -149}, {"q": "Q1 2025", "rev": 5656, "gp": 1090, "oi": 130, "ni": 79}, {"q": "Q2 2025", "rev": 5794, "gp": 1094, "oi": 117, "ni": 47}, {"q": "Q3 2025", "rev": 5810, "gp": 1062, "oi": 136, "ni": 83}, {"q": "Q4 2025", "rev": 5817, "gp": 1068, "oi": 129, "ni": 90}, {"q": "Q1 2026", "rev": 5513, "gp": 1019, "oi": 105, "ni": 64}, {"q": "Q2 2026", "rev": 5897, "gp": 1069, "oi": 145, "ni": 84}], "commentary": [{"q": "Q2 2020", "type": "inflection", "note": "COVID trough. Revenue collapsed to EUR4.44bn (-26% YoY), the only quarter of operating loss (-EUR69m) in the whole series. Gross profit fell to EUR829m. Recovery began the following quarter as lockdowns eased."}, {"q": "Q3 2022", "type": "inflection", "note": "Cycle peak. Gross profit peaked at EUR1,479m and operating income at EUR316m on the post-COVID hiring boom and wage inflation. Everything after this is the down-cycle the FT article is describing."}, {"q": "Q4 2024", "type": "inflection", "note": "Worst quarter of the down-cycle. Net income swung to -EUR149m despite positive EBITA, driven by ~EUR260m of impairments: EUR121m goodwill write-down (Sweden, UK Enterprise) plus loan write-downs. Q4 organic revenue -5.5%; gross margin fell to 18.8% (from 20.7%) on adverse mix and idle time. Management called the labour market 'stuck' - low hiring, low quit rates. Automotive under pressure; Monster disposal also hit reported lines. Only 25% of the business was in 'growth segments' at this point."}, {"q": "Q2 2025", "type": "recent", "note": "Revenue EUR5.8bn (-2.3% YoY); underlying EBITA EUR171m (3.0% margin). Net income -40% YoY to EUR47m. Gross margin slipped to 18.9% (from 19.8%). Opex -4%, FTEs -6% - aggressive cost-out. Professional -9% (the weak spot); Operational more resilient. Japan +6%, India strong, APAC back to growth; Northern Europe & UK still weak. Full write-down of legacy loans to CareerBuilder and Monster (both bankrupt): EUR32m fair-value hit. On track for EUR100m annualized structural savings."}, {"q": "Q4 2025", "type": "recent", "note": "Revenue EUR5.8bn (-2.1% YoY); underlying EBITA EUR191m (3.3%). Net income back to +EUR90m (vs -EUR149m in Q4 2024). FY net income EUR299m. Growth segments now >50% of business (up from 25% a year earlier) - the pivot is working. FCF EUR598m for the year (+77%); leverage down to 1.3x. Germany -10% and Digital specialization -9% remain the soft spots; US +6%, Japan +6%, India double-digit. >EUR100m structural savings delivered."}, {"q": "Q2 2026", "type": "recent", "note": "Return to growth. Organic revenue +1.9% YoY; net income EUR84m (+79%); adjusted net income +30%. Broad-based - strong US Operational (+13%), Southern Europe, e-commerce, healthcare, logistics. Germany back to growth (+4%, operational +8%); automotive recovery broad-based across France, Germany, Spain. Gross margin 18.2% (from 18.9%) on mix, Dutch CLA changes, weak yen. Early-cyclical recovery led by manufacturing/logistics/large clients; SMEs still subdued."}], "ai_signal": [{"q": "Q2 2025", "stance": "deploying", "note": "Management flagged digital and AI-related services seeing increased demand, and digital-first initiatives supporting profitability despite lower top-line. RPO demand cited as a positive trend."}, {"q": "Q4 2025", "stance": "deploying", "note": "Digital marketplaces reached EUR4bn annualized revenue; 1.4m self-scheduled shifts in Q4 (+30% QoQ). Appointed first-ever Chief Digital Growth Officer to accelerate digital strategy. Growth/digital segments now >50% of business vs 25% a year prior - a deliberate structural pivot toward tech-enabled delivery."}, {"q": "Q2 2026", "stance": "deploying", "note": "Digital marketplace enabled 1.7m self-scheduled shifts in Q2 (up from 1.4m in Q4 2025). 'Partner for Talent' transformation with 45+ talent & delivery centres. Framed consistently as productivity/margin tailwind (opex -3-4% YoY), NOT a demand threat. Management (Q4 2024) explicitly said no structural shift away from flexible-workforce usage by clients."}], "data_quality": "GOOD - Quartr standardized quarterly financials clean and internally consistent for all 30 quarters.", "geo_notes": {"germany": "The FT's key drag. Germany -10% in Q4 2025 (automotive weakness), stabilized through 2025, then RETURNED TO GROWTH +4% in Q2 2026 with automotive recovering. Randstad's data supports the FT's Germany-weakness claim for 2024-25 but shows it inflecting positive by mid-2026.", "japan": "Consistent bright spot, echoing the FT's 'Japan strong' claim: +6% in both Q2 2025 and Q4 2025. Part of APAC which returned to growth ahead of Europe.", "us": "Early-cyclical leader in the recovery: US operations +6% (Q4 2025), US Operational +13% (Q2 2026)."}, "summary_stats": {"peak_gp_q": "Q3 2022", "peak_gp": 1479, "trough_covid_q": "Q2 2020", "trough_covid_gp": 829, "latest_q": "Q2 2026", "latest_gp": 1069, "gp_decline_from_peak_pct": -27.7, "series_span": "Q1 2019 - Q2 2026 (30 quarters)"}}, "seg": {"note": "Country-level revenue (EUR m) and EBITA margin (%) extracted from Randstad quarterly interim reports. Geography reporting structure CHANGED 2024 and again Jan 1 2026 (country grouping into regions differs by period). Specialization = Operational/Professional/Digital/Enterprise, also realigned over time. Each report yields current quarter + year-ago comparative. EXTRACTION IN PROGRESS - covering 2019-2026.", "segment_breaks": ["2024: segment reporting structure changed to align with management/strategy", "Jan 1 2026: geographical segmentation changed again; countries now reported flat (major European markets vs other Europe & Latam) rather than grouped into Northern/Southern Europe regions. 2025 comparatives restated."], "geography": {"Q2 2026": {"North America": {"rev": 1103, "ebita_margin": 4.2}, "Netherlands": {"rev": 721, "ebita_margin": 3.8}, "Germany": {"rev": 386, "ebita_margin": 2.3}, "Belgium & Luxembourg": {"rev": 352, "ebita_margin": 4.7}, "France": {"rev": 853, "ebita_margin": 3.6}, "Italy": {"rev": 620, "ebita_margin": 5.9}, "Iberia": {"rev": 535, "ebita_margin": 5.7}, "Other Europe & Latam": {"rev": 749, "ebita_margin": 2.0}, "Asia Pacific": {"rev": 578, "ebita_margin": 3.8}}, "Q2 2025": {"North America": {"rev": 1083, "ebita_margin": 4.1}, "Netherlands": {"rev": 733, "ebita_margin": 4.4}, "Germany": {"rev": 370, "ebita_margin": -0.6}, "Belgium & Luxembourg": {"rev": 370, "ebita_margin": 4.3}, "France": {"rev": 869, "ebita_margin": 4.1}, "Italy": {"rev": 584, "ebita_margin": 6.1}, "Iberia": {"rev": 482, "ebita_margin": 5.9}, "Other Europe & Latam": {"rev": 723, "ebita_margin": 1.6}, "Asia Pacific": {"rev": 580, "ebita_margin": 4.3}}, "Q4 2025": {"North America": {"rev": 1101, "ebita_margin": 3.6}, "Netherlands": {"rev": 765, "ebita_margin": 2.8}, "Germany": {"rev": 360, "ebita_margin": 3.0}, "Belgium & Luxembourg": {"rev": 380, "ebita_margin": 6.2}, "Other NE Countries": {"rev": 389, "ebita_margin": 3.4}, "France": {"rev": 821, "ebita_margin": 5.4}, "Italy": {"rev": 576, "ebita_margin": 5.7}, "Iberia": {"rev": 513, "ebita_margin": 5.9}, "Other SE/UK/Latam": {"rev": 351, "ebita_margin": 3.0}, "Asia Pacific": {"rev": 561, "ebita_margin": 3.3}}, "Q4 2024": {"North America": {"rev": 1190, "ebita_margin": 3.4}, "Netherlands": {"rev": 768, "ebita_margin": 4.6}, "Germany": {"rev": 397, "ebita_margin": -0.5}, "Belgium & Luxembourg": {"rev": 392, "ebita_margin": 4.9}, "Other NE Countries": {"rev": 376, "ebita_margin": 1.4}, "France": {"rev": 863, "ebita_margin": 4.1}, "Italy": {"rev": 561, "ebita_margin": 6.2}, "Iberia": {"rev": 483, "ebita_margin": 6.5}, "Other SE/UK/Latam": {"rev": 437, "ebita_margin": 1.5}, "Asia Pacific": {"rev": 617, "ebita_margin": 4.3}}, "Q2 2024": {"North America": {"rev": 1194, "ebita_margin": 3.4}, "Netherlands": {"rev": 753, "ebita_margin": 4.6}, "Germany": {"rev": 409, "ebita_margin": -1.6}, "Belgium & Luxembourg": {"rev": 379, "ebita_margin": 4.4}, "Other NE Countries": {"rev": 335, "ebita_margin": 1.4}, "France": {"rev": 935, "ebita_margin": 4.3}, "Italy": {"rev": 585, "ebita_margin": 6.3}, "Iberia": {"rev": 472, "ebita_margin": 5.9}, "Other SE/UK/Latam": {"rev": 435, "ebita_margin": 2.6}, "Asia Pacific": {"rev": 588, "ebita_margin": 3.8}}, "Q2 2023": {"North America": {"rev": 1360, "ebita_margin": 5.6}, "Netherlands": {"rev": 811, "ebita_margin": 5.7}, "Germany": {"rev": 478, "ebita_margin": 4.0}, "Belgium & Luxembourg": {"rev": 376, "ebita_margin": 4.5}, "Other NE Countries": {"rev": 378, "ebita_margin": 1.6}, "France": {"rev": 1006, "ebita_margin": 5.0}, "Italy": {"rev": 556, "ebita_margin": 7.0}, "Iberia": {"rev": 388, "ebita_margin": 5.9}, "Other SE/UK/Latam": {"rev": 442, "ebita_margin": 2.3}, "Asia Pacific": {"rev": 670, "ebita_margin": 4.9}}}, "specialization": {"Q4 2025": {"Operational": 3908, "Professional": 960, "Digital": 636, "Enterprise": 313}, "Q4 2024": {"Operational": 4003, "Professional": 1036, "Digital": 702, "Enterprise": 343}}, "country_detail": {"Germany": {"Q4 2024": "-9% reported / -10% organic; EBITA margin -0.5%", "Q2 2025": "stabilizing; margin -0.6%", "Q4 2025": "-10% organic; margin recovered to 3.0%", "Q1 2026": "-4%", "Q2 2026": "+4% YoY (Operational +8%); margin +2.3% - RETURN TO GROWTH"}, "Japan": {"Q4 2025": "+6% YoY (Operational +7%, Digital +7%)", "Q1 2026": "+5%", "Q2 2026": "+5% YoY (Operational +4%, Digital +4%)"}, "United States": {"Q4 2025": "+1% combined (US Operational +6%, Professional -10%)", "Q2 2026": "+5% (US Operational +13%, Professional -6%, Digital -3%)"}, "UK": {"Q4 2025": "-12% YoY", "Q1 2026": "-9%", "Q2 2026": "+3% YoY"}}, "country_timeseries": {"_note": "Individual-country revenue (EUR m) and EBITA margin (%), the most continuous available cut. Countries reported consistently even as regional groupings changed. Q2 and Q4 datapoints assembled from interim reports.", "Germany": [{"q": "Q2 2023", "rev": 478, "m": 4.0}, {"q": "Q2 2024", "rev": 409, "m": -1.6}, {"q": "Q4 2024", "rev": 397, "m": -0.5}, {"q": "Q2 2025", "rev": 370, "m": -0.6}, {"q": "Q4 2025", "rev": 360, "m": 3.0}, {"q": "Q2 2026", "rev": 386, "m": 2.3}], "Japan_note": "Japan revenue not broken out in EUR absolute in these tables (reported as growth % within APAC); consistently +2% (Q2'24) rising to +5-6% (2025-26). Margin within APAC region.", "United States_note": "US reported as growth % within North America; -13% (Q2'24) improving to +5% (Q2'26), US Operational +13%.", "France": [{"q": "Q2 2023", "rev": 1006, "m": 5.0}, {"q": "Q2 2024", "rev": 935, "m": 4.3}, {"q": "Q4 2024", "rev": 863, "m": 4.1}, {"q": "Q2 2025", "rev": 869, "m": 4.1}, {"q": "Q4 2025", "rev": 821, "m": 5.4}, {"q": "Q2 2026", "rev": 853, "m": 3.6}], "Italy": [{"q": "Q2 2023", "rev": 556, "m": 7.0}, {"q": "Q2 2024", "rev": 585, "m": 6.3}, {"q": "Q4 2024", "rev": 561, "m": 6.2}, {"q": "Q2 2025", "rev": 584, "m": 6.1}, {"q": "Q4 2025", "rev": 576, "m": 5.7}, {"q": "Q2 2026", "rev": 620, "m": 5.9}], "Netherlands": [{"q": "Q2 2023", "rev": 811, "m": 5.7}, {"q": "Q2 2024", "rev": 753, "m": 4.6}, {"q": "Q4 2024", "rev": 768, "m": 4.6}, {"q": "Q2 2025", "rev": 733, "m": 4.4}, {"q": "Q4 2025", "rev": 765, "m": 2.8}, {"q": "Q2 2026", "rev": 721, "m": 3.8}], "Iberia": [{"q": "Q2 2023", "rev": 388, "m": 5.9}, {"q": "Q2 2024", "rev": 472, "m": 5.9}, {"q": "Q4 2024", "rev": 483, "m": 6.5}, {"q": "Q2 2025", "rev": 482, "m": 5.9}, {"q": "Q4 2025", "rev": 513, "m": 5.9}, {"q": "Q2 2026", "rev": 535, "m": 5.7}], "North America": [{"q": "Q2 2023", "rev": 1360, "m": 5.6}, {"q": "Q2 2024", "rev": 1194, "m": 3.4}, {"q": "Q4 2024", "rev": 1190, "m": 3.4}, {"q": "Q2 2025", "rev": 1083, "m": 4.1}, {"q": "Q4 2025", "rev": 1101, "m": 3.6}, {"q": "Q2 2026", "rev": 1103, "m": 4.2}], "Asia Pacific": [{"q": "Q2 2023", "rev": 670, "m": 4.9}, {"q": "Q2 2024", "rev": 588, "m": 3.8}, {"q": "Q4 2024", "rev": 617, "m": 4.3}, {"q": "Q2 2025", "rev": 580, "m": 4.3}, {"q": "Q4 2025", "rev": 561, "m": 3.3}, {"q": "Q2 2026", "rev": 578, "m": 3.8}]}, "specialization_growth": {"_note": "Organic YoY % change, from reports", "Q2 2026": {"Operational": 4, "Professional": -2, "Digital": -4, "Enterprise": 2}, "Q4 2025": {"Operational": 0, "Professional": -8, "Digital": -3, "Enterprise": -4}, "Q2 2025": {"Operational": -1, "Professional": -9, "Digital": -2, "Enterprise": -1}, "Q2 2024": {"Operational": -6, "Professional": -8, "Digital": -15, "Enterprise": -9}, "Q2 2023": {"Operational": null, "Professional": null, "Digital": null, "Enterprise": null}}, "specialization_full": {"_note": "COMPLETE gap-free quarterly series, current specialization definition. Q1 2023 to Q2 2026 (14 quarters). 2023 values are restated comparatives (the original 2023 filings used old categories: Staffing/Inhouse/Professionals/Global Businesses). Monster divested, zero from Q4 2024. Minor Operational<->Professional realignment noted by company (esp. Australia).", "quarters": ["Q1 2023", "Q2 2023", "Q3 2023", "Q4 2023", "Q1 2024", "Q2 2024", "Q3 2024", "Q4 2024", "Q1 2025", "Q2 2025", "Q3 2025", "Q4 2025", "Q1 2026", "Q2 2026"], "Operational": [4160, 4157, 4064, 3993, 3839, 4004, 4014, 4003, 3685, 3848, 3893, 3908, 3739, 4020], "Professional": [1069, 1056, 1010, 1035, 981, 1003, 934, 1036, 954, 955, 934, 960, 875, 916], "Digital": [853, 825, 788, 757, 732, 687, 704, 702, 680, 655, 644, 636, 602, 623], "Enterprise": [389, 382, 355, 354, 345, 352, 334, 343, 337, 336, 326, 313, 297, 338]}, "sentiment": {"_note": "Management tone and narrative from earnings calls, quarter by quarter. Tone score is a qualitative read of call language (-2 defensive/negative to +2 confident/positive). Client-demand read focuses on how CLIENTS are changing hiring behaviour, including any AI-driven substitution signal, distinct from Randstad's own AI tooling.", "quarters": [{"q": "Q4 2024", "tone": -2, "headline": "\"Stuck\" labour market, decisive cost action", "tone_word": "Defensive / trough", "business": "CEO characterised the labour market in one word: \"stuck.\" Hiring levels in parts of the business back to 2013-2016; vacancies down sharply; quit rates low; few layoffs. Green shoots discussed a year earlier had not materialised. Took ~EUR 260m of impairments and elevated restructuring; message was right-sizing to the volume the market carries.", "client_demand": "Asked directly whether clients want a structurally smaller flexible workforce, the CEO said no: \"we don't hear anything of our clients to say we want a lower flexible workforce going forward as a strategy.\" Management framed the Professional and Digital collapse as a cyclical hiring freeze (Professional Services and Digital hiring \"almost at the level of the financial crisis\"), NOT structural AI substitution. This is the key counter-evidence to the AI-canary thesis, stated on the record.", "ai_client": "No client-side AI substitution signal acknowledged. Weakness attributed to macro uncertainty and post-COVID overhiring unwind."}, {"q": "Q2 2025", "tone": -1, "headline": "Stabilising, cost discipline, AI demand emerging", "tone_word": "Cautious", "business": "Revenue -2.3%, EBITA margin held at 3.0% through aggressive cost-out (opex -4%, FTEs -6%). Southern Europe and APAC returned to growth; Northern Europe and UK still weak. On track for EUR 100m structural savings.", "client_demand": "First mention of AI-related services seeing increased client demand, and rising RPO demand, framed as a positive. Clients still cautious on permanent hiring; more appetite for temporary/flexible work anticipated as confidence returns.", "ai_client": "Early positive: clients beginning to ask for AI-related talent and services. No sign yet of AI reducing overall hiring demand."}, {"q": "Q4 2025", "tone": 1, "headline": "Growth segments >50%, model \"working\"", "tone_word": "Turning positive", "business": "Net income back to +EUR 90m (from -EUR 149m a year earlier). Growth segments now >50% of the business, up from 25%. FCF +77%; leverage down to 1.3x. Germany -10% and Digital -9% still the soft spots, but US, Japan, India growing.", "client_demand": "Large clients and in-house solutions growing faster than SMEs; clients concentrating spend with fewer, larger staffing partners. Early-cyclical pickup in the US. Demand mix shifting toward operational/volume as perm stays subdued.", "ai_client": "Clients increasingly adopting digital/AI-enabled hiring channels; management positions this as a demand tailwind, not a threat to volumes."}, {"q": "Q2 2026", "tone": 2, "headline": "\"Building back better,\" broad return to growth", "tone_word": "Confident", "business": "Organic revenue +1.9%, first clear return to growth. Germany +4% (operational +8%) as the EUR 800bn German fiscal package began to \"trickle through\"; automotive recovering broadly across France, Germany, Spain. Management: structurally leaner, more scalable Randstad; EUR 10-15m more profit each quarter.", "client_demand": "Recovery led by large clients that plan ahead (manufacturing, logistics, in-house +7%); SMEs still subdued. Perm starting to flatten year-over-year (i.e. stops falling). EUR 1.3bn of large-deal wins in H1 via the \"10 by 10 by 10\" program.", "ai_client": "AI now embedded in how clients receive talent (automated matching, AI agents for outreach and validation), but management frames this as better/faster service that warrants a better price, and reiterates no client push for a smaller flexible workforce. Digital (IT talent) demand still soft, tied to the AI-driven reshaping of the IT services market rather than to overall hiring decline."}], "arc": "Tone travels from defensive trough (Q4 2024, \"stuck\") through cautious stabilisation (2025) to genuine confidence (Q2 2026, \"building back better\"). Throughout, management consistently REJECTS the idea that clients are structurally reducing flexible-workforce or perm hiring because of AI, attributing perm/digital weakness to the cycle. The one place an AI-demand story is acknowledged is the IT services market reshaping Digital, and rising client appetite for AI-enabled delivery."}, "country_annual": {"_note": "Annual country revenue (EUR m) and EBITA margin (%), FY2019-FY2025, from Randstad annual geography tables. YoY = revenue growth vs prior year. Pre-2023 'Rest of the world' bucket (incl. Japan/APAC) not directly comparable to later 'Asia Pacific'; see half-year series for recent APAC.", "data": {"Germany": {"2019": {"rev": 2059, "m": 2.6, "yoy": null}, "2020": {"rev": 1562, "m": 1.1, "yoy": -24.1}, "2021": {"rev": 1895, "m": 2.2, "yoy": 21.3}, "2022": {"rev": 2014, "m": 3.0, "yoy": 6.3}, "2023": {"rev": 1882, "m": 3.5, "yoy": -6.6}, "2024": {"rev": 1648, "m": 0.1, "yoy": -12.4}, "2025": {"rev": 1493, "m": 1.2, "yoy": -9.4}}, "France": {"2019": {"rev": 3707, "m": 6.1, "yoy": null}, "2020": {"rev": 3052, "m": 3.3, "yoy": -17.7}, "2021": {"rev": 3625, "m": 5.5, "yoy": 18.8}, "2022": {"rev": 3916, "m": 5.4, "yoy": 8.0}, "2023": {"rev": 3841, "m": 5.4, "yoy": -1.9}, "2024": {"rev": 3597, "m": 4.2, "yoy": -6.4}, "2025": {"rev": 3356, "m": 4.3, "yoy": -6.7}}, "Netherlands": {"2019": {"rev": 3330, "m": 5.7, "yoy": null}, "2020": {"rev": 2813, "m": 5.1, "yoy": -15.5}, "2021": {"rev": 3413, "m": 6.8, "yoy": 21.3}, "2022": {"rev": 3526, "m": 6.0, "yoy": 3.3}, "2023": {"rev": 3238, "m": 6.0, "yoy": -8.2}, "2024": {"rev": 3008, "m": 4.8, "yoy": -7.1}, "2025": {"rev": 2945, "m": 4.5, "yoy": -2.1}}, "Italy": {"2019": {"rev": 1637, "m": 6.3, "yoy": null}, "2020": {"rev": 1451, "m": 5.0, "yoy": -11.4}, "2021": {"rev": 1978, "m": 6.0, "yoy": 36.3}, "2022": {"rev": 2231, "m": 7.2, "yoy": 12.8}, "2023": {"rev": 2150, "m": 7.3, "yoy": -3.6}, "2024": {"rev": 2217, "m": 6.4, "yoy": 3.1}, "2025": {"rev": 2241, "m": 5.7, "yoy": 1.1}}, "Iberia": {"2019": {"rev": 1482, "m": 5.5, "yoy": null}, "2020": {"rev": 1270, "m": 4.0, "yoy": -14.3}, "2021": {"rev": 1502, "m": 5.5, "yoy": 18.3}, "2022": {"rev": 1621, "m": 5.8, "yoy": 7.9}, "2023": {"rev": 1605, "m": 6.1, "yoy": -1.0}, "2024": {"rev": 1877, "m": 5.9, "yoy": 16.9}, "2025": {"rev": 1962, "m": 5.9, "yoy": 4.5}}, "North America": {"2019": {"rev": 4373, "m": 5.8, "yoy": null}, "2020": {"rev": 4123, "m": 4.9, "yoy": -5.7}, "2021": {"rev": 4558, "m": 5.2, "yoy": 10.6}, "2022": {"rev": 5497, "m": 6.4, "yoy": 20.6}, "2023": {"rev": 5380, "m": 5.0, "yoy": -2.1}, "2024": {"rev": 4766, "m": 3.2, "yoy": -11.4}, "2025": {"rev": 4402, "m": 3.9, "yoy": -7.6}}, "Belgium & Luxembourg": {"2019": {"rev": 1601, "m": 6.1, "yoy": null}, "2020": {"rev": 1401, "m": 5.3, "yoy": -12.5}, "2021": {"rev": 1600, "m": 5.6, "yoy": 14.2}, "2022": {"rev": 1681, "m": 4.7, "yoy": 5.1}, "2023": {"rev": 1567, "m": 4.8, "yoy": -6.8}, "2024": {"rev": 1543, "m": 4.5, "yoy": -1.5}, "2025": {"rev": 1497, "m": 4.8, "yoy": -3.0}}}}, "country_commentary": {"Germany": {"arc": "Germany has been Randstad's structural problem child since well before AI. Already down 15% with a 1.4% margin in Q4 2019 on regulation changes and weak macro; recovered through the 2021-22 boom; then rolled over hard into 2024 (margin turned negative, the epicentre of the FT's story) on automotive weakness. Returned to growth in Q2 2026 (+4%, operational +8%) as the EUR 800bn German fiscal package began to feed through."}, "France": {"arc": "Comparatively steady, a mid-single-digit-margin market. Strong perm-fee growth through 2021-22, softened 2024-25 on weak professional demand, stabilising into 2026."}, "North America": {"arc": "Boomed to EUR 5.5bn in 2022 on the post-COVID hiring surge (perm fees up ~87% at peak), then fell hardest of the majors into 2024 (US Professional -22%, Digital -16%) as white-collar and tech hiring froze. By 2026 the early-cyclical recovery leader (US Operational +13%), though US Digital still soft."}, "Italy": {"arc": "Consistent bright spot. Grew from EUR 1.6bn (2019) to EUR 2.2bn (2025) at among the highest EBITA margins in the group (6-8%). Barely dipped in the downturn."}, "Iberia": {"arc": "Steady grower, Spain leading. Rose from EUR 1.5bn (2019) toward EUR 2.0bn (2025) with stable ~6% margins; among the strongest right through the downturn."}, "Netherlands": {"arc": "Randstad's high-margin home market, but structurally pressured lately: revenue and margin both eroded through 2024-25 on a major collective-labour-agreement reset and weak professional demand."}, "Belgium & Luxembourg": {"arc": "Smaller, stable market; mid-single-digit margins throughout, modest erosion into 2025."}, "Asia Pacific": {"arc": "Asia Pacific is the resilient outlier: broadly flat revenue (EUR 642m to 578m) at a mid-single-digit margin across the downturn, held up by Japan (consistently +5-7%, with even its Digital line growing) and India (+10-16%), partly offset by weak Australia/New Zealand. Reported on the current definition only from Q2 2023; earlier periods sat in the incompatible \"Rest of the world\" bucket and are not spliced."}, "Other Europe & Latin America": {"arc": "A composite of smaller markets: UK, Nordics, Switzerland, Poland and Latin America. Persistently the lowest-margin part of the portfolio (1.5-3.2%), dragged by a sharp UK decline (down 12-17% through 2024-25) and volatile Nordics, cushioned by Latin American growth. For 2023-2025 this line sums the former \"Other NE\" and \"Other SE, UK & Latam\" buckets; Randstad merged them into one \"Other Europe & Latin America\" segment from Q2 2026."}}, "sentiment_freq": {"_note": "Frequency of key terms across all eight Q2 earnings calls 2019-2026, each read in full. These are hand-counts from the transcripts, not mechanical NLP — treat the direction and shape of each line as the signal, not the exact integer. Three toggle groups: AI & Technology, Industries, Sentiment / tone.", "quarters": ["Q2 2019", "Q2 2020", "Q2 2021", "Q2 2022", "Q2 2023", "Q2 2024", "Q2 2025", "Q2 2026"], "groups": {"AI & Technology": {"AI / GenAI / agentic": [0, 0, 0, 0, 0, 1, 5, 6], "digital / platform / marketplace": [3, 4, 6, 4, 4, 9, 7, 8], "automation / tech-vs-touch": [1, 1, 5, 2, 1, 2, 2, 3], "client AI-skills demand": [0, 0, 0, 0, 0, 0, 4, 3]}, "Industries": {"automotive": [6, 4, 5, 3, 2, 3, 1, 5], "IT / technology": [3, 3, 4, 5, 3, 6, 5, 6], "healthcare": [1, 3, 3, 2, 4, 2, 2, 2], "logistics / e-commerce": [0, 2, 5, 4, 2, 3, 2, 2]}, "Sentiment / tone": {"talent scarcity": [1, 0, 6, 9, 3, 1, 1, 1], "hiring freeze": [1, 3, 0, 0, 0, 0, 0, 0], "reskilling / furlough": [2, 8, 1, 0, 0, 0, 0, 0], "normalizing / adaptability": [0, 0, 0, 1, 7, 8, 4, 3], "restructuring": [0, 2, 0, 1, 4, 5, 2, 1], "recovery / building back": [0, 3, 4, 1, 2, 3, 3, 6]}}, "reading": "Across eight years, the AI vocabulary simply does not exist before 2024: “AI / GenAI / agentic” and “client AI-skills demand” are flat zero from 2019 through 2023, appear once in 2024 (Randstad's own Torc tooling), then jump in 2025-26 — and even then it is clients asking for AI skills, not clients cutting headcount because of AI. The dominant tone words tell the real story: “talent scarcity” peaks in the 2021-22 boom and collapses after; “reskilling / furlough” spikes only in the 2020 COVID quarter; “normalizing / adaptability” and “restructuring” dominate the 2023-24 downturn. Notably, “hiring freeze” shows up in 2019 (raised by an analyst) and 2020 (Randstad's own internal freeze) — well before AI — which is a useful reminder that the hiring-freeze worry long predates the current cycle. The shape that matters: the cycle vocabulary is loud and recurring; the AI-substitution vocabulary is still almost absent."}, "country_q2": {"_note": "Q2 revenue (EUR m) by country, 2019-2026, one consistent quarter each year (comparable annual marker, avoids seasonal mixing). EBITA margin shown where reported for Q2. YoY = Q2 vs prior-year Q2.", "data": {"North America": {"2019": {"rev": 1092, "m": 6.3, "yoy": null}, "2020": {"rev": 944, "m": 4.1, "yoy": -13.6}, "2021": {"rev": 1074, "m": null, "yoy": 13.8}, "2022": {"rev": 1367, "m": null, "yoy": 27.3}, "2023": {"rev": 1360, "m": 5.6, "yoy": -0.5}, "2024": {"rev": 1194, "m": 3.4, "yoy": -12.2}, "2025": {"rev": 1083, "m": 4.1, "yoy": -9.3}, "2026": {"rev": 1103, "m": 4.2, "yoy": 1.8}}, "France": {"2019": {"rev": 959, "m": 6.2, "yoy": null}, "2020": {"rev": 559, "m": -1.2, "yoy": -41.7}, "2021": {"rev": 927, "m": null, "yoy": 65.8}, "2022": {"rev": 997, "m": null, "yoy": 7.6}, "2023": {"rev": 1006, "m": 5.0, "yoy": 0.9}, "2024": {"rev": 935, "m": 4.3, "yoy": -7.1}, "2025": {"rev": 869, "m": 4.1, "yoy": -7.1}, "2026": {"rev": 853, "m": 3.6, "yoy": -1.8}}, "Netherlands": {"2019": {"rev": 851, "m": 5.7, "yoy": null}, "2020": {"rev": 624, "m": 4.1, "yoy": -26.7}, "2021": {"rev": 870, "m": null, "yoy": 39.4}, "2022": {"rev": 879, "m": null, "yoy": 1.0}, "2023": {"rev": 811, "m": 5.7, "yoy": -7.7}, "2024": {"rev": 753, "m": 4.6, "yoy": -7.2}, "2025": {"rev": 733, "m": 4.4, "yoy": -2.7}, "2026": {"rev": 721, "m": 3.8, "yoy": -1.6}}, "Germany": {"2019": {"rev": 512, "m": 2.5, "yoy": null}, "2020": {"rev": 322, "m": -1.0, "yoy": -37.1}, "2021": {"rev": 478, "m": null, "yoy": 48.4}, "2022": {"rev": 496, "m": null, "yoy": 3.8}, "2023": {"rev": 478, "m": 4.0, "yoy": -3.6}, "2024": {"rev": 409, "m": -1.6, "yoy": -14.4}, "2025": {"rev": 370, "m": -0.6, "yoy": -9.5}, "2026": {"rev": 386, "m": 2.3, "yoy": 4.3}}, "Italy": {"2019": {"rev": 429, "m": 6.6, "yoy": null}, "2020": {"rev": 301, "m": 3.5, "yoy": -29.8}, "2021": {"rev": 501, "m": null, "yoy": 66.4}, "2022": {"rev": 593, "m": null, "yoy": 18.4}, "2023": {"rev": 556, "m": 7.0, "yoy": -6.2}, "2024": {"rev": 585, "m": 6.3, "yoy": 5.2}, "2025": {"rev": 584, "m": 6.1, "yoy": -0.2}, "2026": {"rev": 620, "m": 5.9, "yoy": 6.2}}, "Iberia": {"2019": {"rev": 369, "m": 5.4, "yoy": null}, "2020": {"rev": 245, "m": 1.3, "yoy": -33.6}, "2021": {"rev": 363, "m": null, "yoy": 48.2}, "2022": {"rev": 404, "m": null, "yoy": 11.3}, "2023": {"rev": 388, "m": 5.9, "yoy": -4.0}, "2024": {"rev": 472, "m": 5.9, "yoy": 21.6}, "2025": {"rev": 482, "m": 5.9, "yoy": 2.1}, "2026": {"rev": 535, "m": 5.7, "yoy": 11.0}}, "Belgium & Luxembourg": {"2019": {"rev": 393, "m": 5.7, "yoy": null}, "2020": {"rev": 279, "m": 2.7, "yoy": -29.0}, "2021": {"rev": 393, "m": null, "yoy": 40.9}, "2022": {"rev": 414, "m": null, "yoy": 5.3}, "2023": {"rev": 376, "m": null, "yoy": -9.2}, "2024": {"rev": 379, "m": 4.4, "yoy": 0.8}, "2025": {"rev": 370, "m": 4.3, "yoy": -2.4}, "2026": {"rev": 352, "m": 4.7, "yoy": -4.9}}}}, "specialization_commentary": {"_note": "Narrative arc per current-definition specialization, grounded in full Q2 earnings-call reads 2019-2026. Series is 2023-on only (current category definitions); pre-2023 language mapped where the same activity existed under old labels (Staffing/Inhouse=Operational, Professionals=Professional, IT solutions/Ausy/Randstad Digital=Digital, RPO/Sourceright=Enterprise).", "Operational": {"arc": "The volume-staffing core (old Staffing + Inhouse). Most cyclical on the way down but first to turn on the way up: it bottomed in Q1 2025 (3,685) and has led the recovery back to 4,020 by Q2 2026, roughly flat versus its Q1 2023 level. Management frames the weakness as pure demand cyclicality — existing clients asking for fewer people, not losing clients — and points to the US digital marketplace (live in 40 states, ~EUR1bn run-rate) as raising fill rates and productivity rather than shrinking the business.", "ai_read": "Least AI-exposed of the four. The story here is manufacturing/automotive PMIs and the German industrial cycle, not automation. Its clean early-cyclical rebound is the strongest single piece of counter-evidence to an AI-displacement reading of the group."}, "Professional": {"arc": "White-collar contract + perm professional placement. Fell about 14% peak-to-trough (1,069 → 916) and, unlike Operational, has not recovered — it keeps grinding lower with only shallow bounces. Management attributes this to the perm/hiring-freeze cycle: clients holding off on committing to permanent and higher-skilled hires amid macro uncertainty (‘give it a quarter or two’).", "ai_read": "Ambiguous. The shape (persistent weakness, no V) is consistent with either a prolonged white-collar hiring freeze or early structural softening. Management is firmly in the cyclical camp; the data alone can't rule out an AI contribution, which is exactly why it's worth watching."}, "Digital": {"arc": "IT/tech talent (Randstad Digital, ex-Ausy/GULP/Torc). The worst performer: down ~27% (853 → 623) with no durable recovery — the clearest AI-shaped curve in the portfolio. But management gives three concrete non-AI reasons (Q2 2024): contractors are the first cost clients cut, vendor consolidation stalls project activity, and clients are offshoring work to India/Romania (1,500+ Randstad Digital staff in India at lower revenue-per-head, so the same work books less revenue).", "ai_read": "The most AI-suggestive line by shape, and the one where AI is most plausibly *already* biting IT hiring. Yet the company's own explanation is offshoring + vendor consolidation + contractors-first, and it is layering its own AI tooling (Torc ‘AI-powered talent marketplace’) on top. If AI substitution shows up anywhere first, this is the line to watch — but as of Q2 2026 it's not what management says is driving it."}, "Enterprise": {"arc": "Large-scale outsourced solutions (RPO, MSP, Sourceright). Late-cycle and volatile: RPO more than doubled at the 2022 peak, then fell ~24% into the downturn as permanent-hiring programs were ramped down (520 FTE cut in a single quarter). Down ~13% peak-to-trough (389 → 338) with a sharp snap-back in Q2 2026.", "ai_read": "Low direct AI exposure; this is a pure derivative of clients' permanent-hiring appetite. Its rebound in 2026 tracks the perm recovery, reinforcing the cyclical-not-structural reading."}}, "country_q4": {"_note": "Q4 (full-year report) country revenue (EUR m) + EBITA margin (%) + organic YoY, from annual reports. Same 7-country basis as country_q2. Q4 gives the cleanest year-end marker; combined with Q2 gives a twice-yearly reported series 2019-onward (no Q1/Q3 euro/margin is disclosed by Randstad).", "data": {"North America": {"2019": {"rev": 1126, "m": 6.0, "yoy": -2}, "2020": {"rev": 1093, "m": 6.0, "yoy": 1}, "2021": {"rev": 1298, "m": 6.3, "yoy": 14}, "2022": {"rev": 1370, "m": 6.4, "yoy": -5}, "2023": {"rev": 1108, "m": 5.1, "yoy": -15}, "2024": {"rev": 1190, "m": 3.4, "yoy": null}, "2025": {"rev": 1101, "m": 3.6, "yoy": 1}}, "France": {"2019": {"rev": 928, "m": 6.6, "yoy": 1}, "2020": {"rev": 872, "m": 5.3, "yoy": -7}, "2021": {"rev": 957, "m": 6.6, "yoy": 10}, "2022": {"rev": 986, "m": 6.4, "yoy": 4}, "2023": {"rev": 935, "m": 6.0, "yoy": -5}, "2024": {"rev": 863, "m": 4.1, "yoy": null}, "2025": {"rev": 821, "m": 5.4, "yoy": -6}}, "Netherlands": {"2019": {"rev": 815, "m": 6.4, "yoy": -10}, "2020": {"rev": 778, "m": 6.2, "yoy": -6}, "2021": {"rev": 915, "m": 6.6, "yoy": 16}, "2022": {"rev": 906, "m": 6.1, "yoy": 2}, "2023": {"rev": 818, "m": 6.4, "yoy": -8}, "2024": {"rev": 768, "m": 4.6, "yoy": null}, "2025": {"rev": 765, "m": 2.8, "yoy": -7}}, "Germany": {"2019": {"rev": 482, "m": 1.4, "yoy": -15}, "2020": {"rev": 437, "m": 2.9, "yoy": -5}, "2021": {"rev": 503, "m": 3.2, "yoy": 15}, "2022": {"rev": 519, "m": 3.9, "yoy": 9}, "2023": {"rev": 419, "m": 1.9, "yoy": -18}, "2024": {"rev": 397, "m": -0.5, "yoy": null}, "2025": {"rev": 360, "m": 3.0, "yoy": -10}}, "Belgium & Luxembourg": {"2019": {"rev": 396, "m": 6.4, "yoy": -3}, "2020": {"rev": 389, "m": 7.1, "yoy": -3}, "2021": {"rev": 423, "m": 6.5, "yoy": 7}, "2022": {"rev": 415, "m": 4.2, "yoy": -2}, "2023": {"rev": 387, "m": 5.8, "yoy": -6}, "2025": {"rev": 380, "m": 6.2, "yoy": -5}, "2024": {"rev": 392, "m": 4.9, "yoy": null}}, "Italy": {"2019": {"rev": 416, "m": 6.7, "yoy": -1}, "2020": {"rev": 423, "m": 7.1, "yoy": 0}, "2021": {"rev": 558, "m": 6.6, "yoy": 32}, "2022": {"rev": 560, "m": 8.0, "yoy": 4}, "2023": {"rev": 539, "m": 8.1, "yoy": -2}, "2024": {"rev": 561, "m": 6.2, "yoy": null}, "2025": {"rev": 576, "m": 5.7, "yoy": 3}}, "Iberia": {"2019": {"rev": 380, "m": 5.9, "yoy": 1}, "2020": {"rev": 359, "m": 5.0, "yoy": -4}, "2021": {"rev": 413, "m": 5.9, "yoy": 15}, "2022": {"rev": 398, "m": 6.5, "yoy": -2}, "2023": {"rev": 436, "m": 6.5, "yoy": 0}, "2024": {"rev": 483, "m": 6.5, "yoy": null}, "2025": {"rev": 513, "m": 5.9, "yoy": 5}}}}, "country_h1h2": {"_note": "Merged half-yearly reported country series: Q2 (half-year report) and Q4 (full-year report), the only two quarters where Randstad discloses absolute EUR revenue and per-country EBITA margin. Q1/Q3 disclose growth% only and are excluded. Q2 2019 -> Q2 2026, 15 points per country. rev=EUR m, m=EBITA margin % (null where not separately reported that period), yoy=organic YoY %. Regional aggregates (Asia Pacific; Other Europe & Latin America) added for Q2 2023-Q2 2026 only, the span on which these buckets are consistently defined; Other Europe & Latin America for 2023-2025 sums the former Other-NE and Other-SE/UK/Latam buckets with a revenue-weighted margin, matching the merged bucket Randstad adopted from Q2 2026.", "data": {"North America": [{"q": "Q2 2019", "rev": 1092, "m": 6.3, "yoy": null}, {"q": "Q4 2019", "rev": 1126, "m": 6.0, "yoy": -2}, {"q": "Q2 2020", "rev": 944, "m": 4.1, "yoy": -13.6}, {"q": "Q4 2020", "rev": 1093, "m": 6.0, "yoy": 1}, {"q": "Q2 2021", "rev": 1074, "m": null, "yoy": 13.8}, {"q": "Q4 2021", "rev": 1298, "m": 6.3, "yoy": 14}, {"q": "Q2 2022", "rev": 1367, "m": null, "yoy": 27.3}, {"q": "Q4 2022", "rev": 1370, "m": 6.4, "yoy": -5}, {"q": "Q2 2023", "rev": 1360, "m": 5.6, "yoy": -0.5}, {"q": "Q4 2023", "rev": 1108, "m": 5.1, "yoy": -15}, {"q": "Q2 2024", "rev": 1194, "m": 3.4, "yoy": -12.2}, {"q": "Q4 2024", "rev": 1190, "m": 3.4, "yoy": null}, {"q": "Q2 2025", "rev": 1083, "m": 4.1, "yoy": -9.3}, {"q": "Q4 2025", "rev": 1101, "m": 3.6, "yoy": 1}, {"q": "Q2 2026", "rev": 1103, "m": 4.2, "yoy": 1.8}], "France": [{"q": "Q2 2019", "rev": 959, "m": 6.2, "yoy": null}, {"q": "Q4 2019", "rev": 928, "m": 6.6, "yoy": 1}, {"q": "Q2 2020", "rev": 559, "m": -1.2, "yoy": -41.7}, {"q": "Q4 2020", "rev": 872, "m": 5.3, "yoy": -7}, {"q": "Q2 2021", "rev": 927, "m": null, "yoy": 65.8}, {"q": "Q4 2021", "rev": 957, "m": 6.6, "yoy": 10}, {"q": "Q2 2022", "rev": 997, "m": null, "yoy": 7.6}, {"q": "Q4 2022", "rev": 986, "m": 6.4, "yoy": 4}, {"q": "Q2 2023", "rev": 1006, "m": 5.0, "yoy": 0.9}, {"q": "Q4 2023", "rev": 935, "m": 6.0, "yoy": -5}, {"q": "Q2 2024", "rev": 935, "m": 4.3, "yoy": -7.1}, {"q": "Q4 2024", "rev": 863, "m": 4.1, "yoy": null}, {"q": "Q2 2025", "rev": 869, "m": 4.1, "yoy": -7.1}, {"q": "Q4 2025", "rev": 821, "m": 5.4, "yoy": -6}, {"q": "Q2 2026", "rev": 853, "m": 3.6, "yoy": -1.8}], "Netherlands": [{"q": "Q2 2019", "rev": 851, "m": 5.7, "yoy": null}, {"q": "Q4 2019", "rev": 815, "m": 6.4, "yoy": -10}, {"q": "Q2 2020", "rev": 624, "m": 4.1, "yoy": -26.7}, {"q": "Q4 2020", "rev": 778, "m": 6.2, "yoy": -6}, {"q": "Q2 2021", "rev": 870, "m": null, "yoy": 39.4}, {"q": "Q4 2021", "rev": 915, "m": 6.6, "yoy": 16}, {"q": "Q2 2022", "rev": 879, "m": null, "yoy": 1.0}, {"q": "Q4 2022", "rev": 906, "m": 6.1, "yoy": 2}, {"q": "Q2 2023", "rev": 811, "m": 5.7, "yoy": -7.7}, {"q": "Q4 2023", "rev": 818, "m": 6.4, "yoy": -8}, {"q": "Q2 2024", "rev": 753, "m": 4.6, "yoy": -7.2}, {"q": "Q4 2024", "rev": 768, "m": 4.6, "yoy": null}, {"q": "Q2 2025", "rev": 733, "m": 4.4, "yoy": -2.7}, {"q": "Q4 2025", "rev": 765, "m": 2.8, "yoy": -7}, {"q": "Q2 2026", "rev": 721, "m": 3.8, "yoy": -1.6}], "Germany": [{"q": "Q2 2019", "rev": 512, "m": 2.5, "yoy": null}, {"q": "Q4 2019", "rev": 482, "m": 1.4, "yoy": -15}, {"q": "Q2 2020", "rev": 322, "m": -1.0, "yoy": -37.1}, {"q": "Q4 2020", "rev": 437, "m": 2.9, "yoy": -5}, {"q": "Q2 2021", "rev": 478, "m": null, "yoy": 48.4}, {"q": "Q4 2021", "rev": 503, "m": 3.2, "yoy": 15}, {"q": "Q2 2022", "rev": 496, "m": null, "yoy": 3.8}, {"q": "Q4 2022", "rev": 519, "m": 3.9, "yoy": 9}, {"q": "Q2 2023", "rev": 478, "m": 4.0, "yoy": -3.6}, {"q": "Q4 2023", "rev": 419, "m": 1.9, "yoy": -18}, {"q": "Q2 2024", "rev": 409, "m": -1.6, "yoy": -14.4}, {"q": "Q4 2024", "rev": 397, "m": -0.5, "yoy": null}, {"q": "Q2 2025", "rev": 370, "m": -0.6, "yoy": -9.5}, {"q": "Q4 2025", "rev": 360, "m": 3.0, "yoy": -10}, {"q": "Q2 2026", "rev": 386, "m": 2.3, "yoy": 4.3}], "Belgium & Luxembourg": [{"q": "Q2 2019", "rev": 393, "m": 5.7, "yoy": null}, {"q": "Q4 2019", "rev": 396, "m": 6.4, "yoy": -3}, {"q": "Q2 2020", "rev": 279, "m": 2.7, "yoy": -29.0}, {"q": "Q4 2020", "rev": 389, "m": 7.1, "yoy": -3}, {"q": "Q2 2021", "rev": 393, "m": null, "yoy": 40.9}, {"q": "Q4 2021", "rev": 423, "m": 6.5, "yoy": 7}, {"q": "Q2 2022", "rev": 414, "m": null, "yoy": 5.3}, {"q": "Q4 2022", "rev": 415, "m": 4.2, "yoy": -2}, {"q": "Q2 2023", "rev": 376, "m": null, "yoy": -9.2}, {"q": "Q4 2023", "rev": 387, "m": 5.8, "yoy": -6}, {"q": "Q2 2024", "rev": 379, "m": 4.4, "yoy": 0.8}, {"q": "Q4 2024", "rev": 392, "m": 4.9, "yoy": null}, {"q": "Q2 2025", "rev": 370, "m": 4.3, "yoy": -2.4}, {"q": "Q4 2025", "rev": 380, "m": 6.2, "yoy": -5}, {"q": "Q2 2026", "rev": 352, "m": 4.7, "yoy": -4.9}], "Italy": [{"q": "Q2 2019", "rev": 429, "m": 6.6, "yoy": null}, {"q": "Q4 2019", "rev": 416, "m": 6.7, "yoy": -1}, {"q": "Q2 2020", "rev": 301, "m": 3.5, "yoy": -29.8}, {"q": "Q4 2020", "rev": 423, "m": 7.1, "yoy": 0}, {"q": "Q2 2021", "rev": 501, "m": null, "yoy": 66.4}, {"q": "Q4 2021", "rev": 558, "m": 6.6, "yoy": 32}, {"q": "Q2 2022", "rev": 593, "m": null, "yoy": 18.4}, {"q": "Q4 2022", "rev": 560, "m": 8.0, "yoy": 4}, {"q": "Q2 2023", "rev": 556, "m": 7.0, "yoy": -6.2}, {"q": "Q4 2023", "rev": 539, "m": 8.1, "yoy": -2}, {"q": "Q2 2024", "rev": 585, "m": 6.3, "yoy": 5.2}, {"q": "Q4 2024", "rev": 561, "m": 6.2, "yoy": null}, {"q": "Q2 2025", "rev": 584, "m": 6.1, "yoy": -0.2}, {"q": "Q4 2025", "rev": 576, "m": 5.7, "yoy": 3}, {"q": "Q2 2026", "rev": 620, "m": 5.9, "yoy": 6.2}], "Iberia": [{"q": "Q2 2019", "rev": 369, "m": 5.4, "yoy": null}, {"q": "Q4 2019", "rev": 380, "m": 5.9, "yoy": 1}, {"q": "Q2 2020", "rev": 245, "m": 1.3, "yoy": -33.6}, {"q": "Q4 2020", "rev": 359, "m": 5.0, "yoy": -4}, {"q": "Q2 2021", "rev": 363, "m": null, "yoy": 48.2}, {"q": "Q4 2021", "rev": 413, "m": 5.9, "yoy": 15}, {"q": "Q2 2022", "rev": 404, "m": null, "yoy": 11.3}, {"q": "Q4 2022", "rev": 398, "m": 6.5, "yoy": -2}, {"q": "Q2 2023", "rev": 388, "m": 5.9, "yoy": -4.0}, {"q": "Q4 2023", "rev": 436, "m": 6.5, "yoy": 0}, {"q": "Q2 2024", "rev": 472, "m": 5.9, "yoy": 21.6}, {"q": "Q4 2024", "rev": 483, "m": 6.5, "yoy": null}, {"q": "Q2 2025", "rev": 482, "m": 5.9, "yoy": 2.1}, {"q": "Q4 2025", "rev": 513, "m": 5.9, "yoy": 5}, {"q": "Q2 2026", "rev": 535, "m": 5.7, "yoy": 11.0}], "Asia Pacific": [{"q": "Q2 2023", "rev": 642, "m": 5.3, "yoy": 5}, {"q": "Q4 2023", "rev": 598, "m": 4.6, "yoy": -3}, {"q": "Q2 2024", "rev": 588, "m": 3.8, "yoy": -8.4}, {"q": "Q4 2024", "rev": 617, "m": 4.3, "yoy": null}, {"q": "Q2 2025", "rev": 580, "m": 4.3, "yoy": 2}, {"q": "Q4 2025", "rev": 561, "m": 3.3, "yoy": 1}, {"q": "Q2 2026", "rev": 578, "m": 3.8, "yoy": null}], "Other Europe & Latin America": [{"q": "Q2 2023", "rev": 724, "m": 2.8, "yoy": -0.0}, {"q": "Q4 2023", "rev": 767, "m": 3.1, "yoy": -6.3}, {"q": "Q2 2024", "rev": 770, "m": 2.1, "yoy": 8.6}, {"q": "Q4 2024", "rev": 813, "m": 1.5, "yoy": null}, {"q": "Q2 2025", "rev": 721, "m": 1.6, "yoy": -3.7}, {"q": "Q4 2025", "rev": 740, "m": 3.2, "yoy": -2.7}, {"q": "Q2 2026", "rev": 749, "m": 2.0, "yoy": 0}]}}, "region_h1h2_raw": {"Other NE Countries": {"Q2 2025": {"rev": 344, "m": 1.8, "yoy": 1}, "Q2 2024": {"rev": 335, "m": 1.4, "yoy": -9.0}, "Q4 2023": {"rev": 416, "m": 2.7, "yoy": -4}, "Q4 2024": {"rev": 376, "m": 1.4, "yoy": null}, "Q4 2025": {"rev": 389, "m": 3.4, "yoy": 2}, "Q2 2023": {"rev": 368, "m": 2.4, "yoy": -1}}, "Other SE, UK & Latam": {"Q2 2025": {"rev": 377, "m": 1.5, "yoy": -8}, "Q2 2024": {"rev": 435, "m": 2.6, "yoy": 22.2}, "Q4 2023": {"rev": 351, "m": 3.5, "yoy": -9}, "Q4 2024": {"rev": 437, "m": 1.5, "yoy": null}, "Q4 2025": {"rev": 351, "m": 3.0, "yoy": -8}, "Q2 2023": {"rev": 356, "m": 3.3, "yoy": 1}}, "Asia Pacific": {"Q2 2025": {"rev": 580, "m": 4.3, "yoy": 2}, "Q2 2024": {"rev": 588, "m": 3.8, "yoy": -8.4}, "Q4 2023": {"rev": 598, "m": 4.6, "yoy": -3}, "Q4 2024": {"rev": 617, "m": 4.3, "yoy": null}, "Q4 2025": {"rev": 561, "m": 3.3, "yoy": 1}, "Q2 2026": {"rev": 578, "m": 3.8, "yoy": null}, "Q2 2023": {"rev": 642, "m": 5.3, "yoy": 5}}}}};
+const G=DATA.group, S=DATA.seg, ss=G.summary_stats;
+const tip=document.getElementById('tip');
+function paren(v){return v<0?"("+Math.abs(v)+")":(v===0?"\u2013":""+v);}
+function showTip(e,html){tip.innerHTML=html;tip.style.opacity=1;tip.style.left=Math.min(e.clientX+14,innerWidth-235)+'px';tip.style.top=(e.clientY+14)+'px';}
+function hideTip(){tip.style.opacity=0;}
+const crumbNames={overview:"Summary",country:"By Country",spec:"By Specialization",sentiment:"Company Sentiment",ai:"AI & Client Demand"};
+document.querySelectorAll('#tabs .tab').forEach(t=>{t.addEventListener('click',()=>{
+ document.querySelectorAll('#tabs .tab').forEach(x=>x.classList.remove('active'));
+ document.querySelectorAll('.tab-panel').forEach(x=>x.classList.remove('active'));
+ t.classList.add('active');
+ document.querySelector('.tab-panel[data-panel="'+t.dataset.tab+'"]').classList.add('active');
+ document.getElementById('crumb').textContent=crumbNames[t.dataset.tab];
+})});
+function goTab(name){
+ document.querySelectorAll('#tabs .tab').forEach(function(x){x.classList.toggle('active',x.dataset.tab===name);});
+ document.querySelectorAll('.tab-panel').forEach(function(x){x.classList.toggle('active',x.dataset.panel===name);});
+ var cn=crumbNames[name]; if(cn)document.getElementById('crumb').textContent=cn;
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+window.goTab=goTab;
+
+// ---- SUMMARY: hero verdict + findings grid ----
+(function(){
+ var ss=G.summary_stats;
+ var decl=Math.abs(ss.gp_decline_from_peak_pct);
+ document.getElementById('sum-headline').innerHTML =
+   'A real hiring downturn \u2014 but the evidence points to cycle and geography, not an AI jobs collapse '
+   + '<span class="sum-verdict-tag mixed">Verdict: mixed signal</span>';
+ document.getElementById('sum-sub').textContent =
+   'Randstad, the world\u2019s largest recruiter, saw net fees fall '+decl+'% from their Q3 2022 peak before returning to '
+   +'growth in Q2 2026. The shape of that decline \u2014 across countries, specializations, and management\u2019s own words \u2014 '
+   +'looks far more like the post-pandemic cycle and Germany\u2019s structural weakness than like AI displacing hiring. '
+   +'The one genuinely AI-shaped clue is the tech-talent (Digital) line, which is worth watching.';
+ var findings=[
+  {icon:'1',color:'#122F67',title:'The decline is real and it is a hiring signal',
+   body:'Group net fees fell <b>'+decl+'% from the Q3 2022 peak</b> (EUR '+(ss.peak_gp/1000).toFixed(2)+'bn \u2192 '+(ss.latest_gp/1000).toFixed(2)+'bn), with profit bottoming in Q4 2024 when management called the labour market \u201cstuck.\u201d Recruiter fees are a clean read on hiring appetite, and appetite fell hard.',
+   link:'See the group trajectory',linkTab:'overview'},
+  {icon:'2',color:'#9C0006',title:'Germany is the epicentre \u2014 but was weak long before AI',
+   body:'The country series back to 2019 shows Germany <b>already down 15% at a 1.4% margin in 2019</b> on regulation and macro, booming in 2021\u201322, collapsing to negative margins by 2024, and recovering to +4% by Q2 2026 on fiscal stimulus. That arc reads as cyclical and structural-to-Germany, not a fresh AI signal.',
+   link:'Open By Country',linkTab:'country'},
+  {icon:'3',color:'#2869A9',title:'The specialization split is the strongest AI-shaped clue',
+   body:'Since 2023, <b>Digital (tech talent) fell 27% and Professional 14%</b>, while volume Operational held roughly flat and has turned up. AI-exposed white-collar and IT hiring underperformed \u2014 but management ties Digital\u2019s weakness to offshoring, vendor consolidation and contractors being cut first, not AI substitution.',
+   link:'Open By Specialization',linkTab:'spec'},
+  {icon:'4',color:'#74A9CE',title:'Regions confirm the cyclical read',
+   body:'<b>Asia Pacific stayed resilient</b> (Japan +5\u20137%, India double digits), while Southern Europe (Italy, Iberia) is now the growth engine and the UK-heavy \u201cother\u201d bucket is weakest. A demand map this varied by geography is hard to square with a uniform AI shock.',
+   link:'See the regional panels',linkTab:'country'},
+  {icon:'5',color:'#5E5E5E',title:'Management consistently rejects an AI-substitution story',
+   body:'Across eight years of Q2 calls, the AI-substitution vocabulary is <b>near-absent before 2024</b>. Where AI appears from 2025 it is <b>clients demanding AI skills</b> and Randstad deploying its own tooling \u2014 not clients cutting headcount. Tone travels from \u201cstuck\u201d (Q4 2024) to \u201cbuilding back better\u201d (Q2 2026).',
+   link:'Open Company Sentiment',linkTab:'sentiment'}
+ ];
+ document.getElementById('sum-findings').innerHTML = findings.map(function(f){
+   return '<div class="finding"><div class="f-head"><div class="f-icon" style="background:'+f.color+'">'+f.icon+'</div><h3>'+f.title+'</h3></div>'
+     +'<div class="f-body">'+f.body+'</div>'
+     +'<div class="f-link" onclick="goTab(\''+f.linkTab+'\')">'+f.link+' \u2192</div></div>';
+ }).join('');
+})();
+
+
+// group chart
+const commQs={};G.commentary.forEach(c=>commQs[c.q]=c.type);
+(function(){
+ const qs=G.quarters,W=980,H=330,pL=48,pR=14,pT=18,pB=40;
+ const xs=i=>pL+i*(W-pL-pR)/(qs.length-1);
+ const vals=[];qs.forEach(q=>vals.push(q.gp,q.oi));const mx=Math.max(...vals),mn=Math.min(0,...vals);
+ const ys=v=>pT+(mx-v)/(mx-mn)*(H-pT-pB);
+ const ln=k=>qs.map((q,i)=>(i?'L':'M')+xs(i).toFixed(1)+' '+ys(q[k]).toFixed(1)).join(' ');
+ let g='';for(let v=0;v<=1500;v+=500){const y=ys(v);g+=`<line x1="${pL}" y1="${y}" x2="${W-pR}" y2="${y}" stroke="var(--border)"/><text class="axlab" x="${pL-7}" y="${y+3}" text-anchor="end">${v}</text>`}
+ const z=ys(0);g+=`<line x1="${pL}" y1="${z}" x2="${W-pR}" y2="${z}" stroke="var(--border-strong)" stroke-dasharray="3 3"/>`;
+ let xl='';qs.forEach((q,i)=>{if(q.q.startsWith('Q1')||i===0)xl+=`<text class="axlab" x="${xs(i)}" y="${H-20}" text-anchor="middle">${q.q.slice(3)}</text>`});
+ let dots='';qs.forEach((q,i)=>{const c=commQs[q.q];dots+=`<circle cx="${xs(i)}" cy="${ys(q.gp)}" r="${c?5:3}" fill="${c?'#2869A9':'#122F67'}" data-i="${i}" style="cursor:pointer"/><circle cx="${xs(i)}" cy="${ys(q.oi)}" r="2.5" fill="#74A9CE" data-i="${i}" style="cursor:pointer"/>`});
+ document.getElementById('groupchart').innerHTML=`<svg class="viz" viewBox="0 0 ${W} ${H}">${g}${xl}<path d="${ln('gp')}" fill="none" stroke="#122F67" stroke-width="2.4"/><path d="${ln('oi')}" fill="none" stroke="#74A9CE" stroke-width="1.8"/>${dots}</svg>`;
+ document.querySelectorAll('#groupchart circle').forEach(el=>{el.addEventListener('mousemove',e=>{const q=qs[+el.dataset.i];const c=G.commentary.find(x=>x.q===q.q);showTip(e,`<b>${q.q}</b><br>Net fees EUR ${q.gp}m<br>Op income EUR ${paren(q.oi)}m<br>Net income EUR ${paren(q.ni)}m`+(c?'<br>&#9679; commentary':''));});el.addEventListener('mouseleave',hideTip)});
+})();
+const tagStyle={inflection:'background:var(--red-fill);color:var(--red-text)',recent:'background:var(--green-fill);color:var(--green-text)'};
+document.getElementById('timeline').innerHTML=G.commentary.map(c=>`<div class="tl-item"><div class="tl-date"><div class="tl-q">${c.q}</div><span class="tag" style="${tagStyle[c.type]||''}">${c.type}</span></div><div class="tl-body">${c.note}</div></div>`).join('');
+
+// COUNTRY annual charts 2019-2025 with YoY + commentary
+const ca=S.country_h1h2.data, cc=S.country_commentary;
+const cOrder=[["Germany","below"],["North America","inreview"],["France","pending"],["Netherlands","pending"],["Italy","ontrack"],["Iberia","ontrack"],["Belgium & Luxembourg","inactive"],["Asia Pacific","inreview"],["Other Europe & Latin America","inactive"]];
+function annualChart(country){
+ const pts=ca[country];
+ const W=440,H=170,pL=34,pR=36,pT=14,pB=26;
+ const xs=i=>pL+i*(W-pL-pR)/(pts.length-1);
+ const revs=pts.map(p=>p.rev), msv=pts.map(p=>p.m).filter(v=>v!=null);
+ const rmax=Math.max(...revs)*1.12, mmax=Math.max(...msv,2)+1, mmin=Math.min(...msv,0)-0.5;
+ const yr=v=>pT+(rmax-v)/rmax*(H-pT-pB); const ym=v=>pT+(mmax-v)/(mmax-mmin)*(H-pT-pB);
+ const bw=(W-pL-pR)/pts.length*0.62;
+ let bars='';pts.forEach((p,i)=>{const fill=p.q.startsWith('Q2')?'#122F67':'#74A9CE';bars+=`<rect x="${xs(i)-bw/2}" y="${yr(p.rev)}" width="${bw}" height="${H-pB-yr(p.rev)}" fill="${fill}" opacity=".28" data-country="${country}" data-i="${i}" style="cursor:pointer"/>`});
+ const mpts=pts.map((p,i)=>({m:p.m,i})).filter(p=>p.m!=null);
+ const mln=mpts.map((p,k)=>(k?'L':'M')+xs(p.i).toFixed(1)+' '+ym(p.m).toFixed(1)).join(' ');
+ let md='';pts.forEach((p,i)=>{if(p.m==null)return;md+=`<circle cx="${xs(i)}" cy="${ym(p.m)}" r="2.6" fill="${p.m<0?'#9C0006':'#2869A9'}" data-country="${country}" data-i="${i}" style="cursor:pointer"/>`});
+ const zy=ym(0);
+ let xl='';pts.forEach((p,i)=>{if(p.q.startsWith('Q2')){const yr2=p.q.slice(3);xl+=`<text class="axlab" x="${xs(i)}" y="${H-8}" text-anchor="middle">'${yr2.slice(2)}</text>`}});
+ return `<svg class="viz" viewBox="0 0 ${W} ${H}">${bars}<line x1="${pL}" y1="${zy}" x2="${W-pR}" y2="${zy}" stroke="var(--border-strong)" stroke-dasharray="2 2"/><path d="${mln}" fill="none" stroke="#2869A9" stroke-width="2"/>${md}${xl}<text class="axlab" x="2" y="${pT+3}">EUR m</text><text class="axlab" x="${W-2}" y="${pT+3}" text-anchor="end">EBITA%</text></svg>`;
+}
+document.getElementById('countrygrid').innerHTML=cOrder.map(o=>{
+ const c=o[0];if(!ca[c])return'';
+ const pts=ca[c];const last=pts[pts.length-1];const first=pts[0];
+ const totchg=Math.round((last.rev-first.rev)/first.rev*100);
+ return `<div class="smchart"><div class="sm-head"><h3>${c}</h3><span class="badge badge--${o[1]}"><span class="dot"></span>${last.yoy!=null?(last.yoy>=0?'+':'')+last.yoy+'% YoY':'reported'}</span></div><div class="sm-cap">${first.q} to ${last.q}: EUR ${first.rev}m to EUR ${last.rev}m (${paren(totchg)}%)${last.m!=null?" &middot; latest margin "+(last.m<0?"("+Math.abs(last.m)+"%)":last.m+"%"):""}</div>${annualChart(c)}<div class="sm-comment">${cc[c]?cc[c].arc:''}</div></div>`;
+}).join('');
+document.querySelectorAll('#countrygrid rect, #countrygrid circle').forEach(el=>{el.addEventListener('mousemove',e=>{const c=el.dataset.country,i=+el.dataset.i;const d=ca[c][i];showTip(e,`<b>${c} &middot; ${d.q}</b><br>Revenue EUR ${d.rev}m${d.m!=null?'<br>EBITA margin '+(d.m<0?'('+Math.abs(d.m)+'%)':d.m+'%'):''}${d.yoy!=null?'<br>YoY '+(d.yoy>=0?'+':'')+d.yoy+'%':''}`);});el.addEventListener('mouseleave',hideTip)});
+
+
+// SPECIALIZATION
+const sf=S.specialization_full, sq=sf.quarters; const scm=S.specialization_commentary||{};
+const specs=[{k:"Operational",color:"#122F67",badge:"ontrack",tag:"Flat / Resilient",sub:"Temp and volume hiring"},{k:"Professional",color:"#2869A9",badge:"pending",tag:"Weak",sub:"Permanent white-collar"},{k:"Digital",color:"#9C0006",badge:"below",tag:"Weakest",sub:"Tech and IT talent"},{k:"Enterprise",color:"#74A9CE",badge:"pending",tag:"Soft",sub:"Large managed accounts"}];
+function specChart(vals,color){
+ const W=420,H=170,pL=38,pR=16,pT=14,pB=24;
+ const pts=vals.map((v,i)=>({v,i})).filter(p=>p.v!=null);
+ const xs=i=>pL+i*(W-pL-pR)/(vals.length-1);
+ const mx=Math.ceil(Math.max(...pts.map(p=>p.v))/200)*200, mn=Math.floor(Math.min(...pts.map(p=>p.v))*0.9/200)*200;
+ const ys=v=>pT+(mx-v)/(mx-mn)*(H-pT-pB);
+ let g='';for(let v=mn;v<=mx;v+=(mx-mn)/2){const y=ys(v);g+=`<line x1="${pL}" y1="${y}" x2="${W-pR}" y2="${y}" stroke="var(--border)"/><text class="axlab" x="${pL-6}" y="${y+3}" text-anchor="end">${Math.round(v)}</text>`}
+ const ln=pts.map((p,j)=>(j?'L':'M')+xs(p.i).toFixed(1)+' '+ys(p.v).toFixed(1)).join(' ');
+ let dots='';pts.forEach(p=>{dots+=`<circle cx="${xs(p.i)}" cy="${ys(p.v)}" r="3" fill="${color}" data-i="${p.i}" style="cursor:pointer"/>`});
+ let xl='';sq.forEach((q,i)=>{if(q.startsWith('Q1')||i===sq.length-1)xl+=`<text class="axlab" x="${xs(i)}" y="${H-8}" text-anchor="middle">${q.replace(' ','')}</text>`});
+ return `<svg class="viz" viewBox="0 0 ${W} ${H}">${g}${xl}<path d="${ln}" fill="none" stroke="${color}" stroke-width="2.4"/>${dots}<text class="axlab" x="2" y="${pT+2}">EUR m</text></svg>`;
+}
+document.getElementById('specgrid').innerHTML=specs.map(sp=>{const vals=sf[sp.k];const first=vals[0],last=vals[vals.length-1];const chg=Math.round((last-first)/first*100);return `<div class="smchart"><div class="sm-head"><h3>${sp.k} <span class="sm-sub">&middot; ${sp.sub}</span></h3><span class="badge badge--${sp.badge}"><span class="dot"></span>${sp.tag}</span></div><div class="sm-cap">${sq[0]} to ${sq[sq.length-1]}: EUR ${first} to EUR ${last} (${paren(chg)}%)</div><div data-spec="${sp.k}">${specChart(vals,sp.color)}</div>${scm[sp.k]?`<div class="sm-comment">${scm[sp.k].arc}</div><div class="sm-airead"><span class="airead-tag">AI read</span>${scm[sp.k].ai_read}</div>`:''}</div>`}).join('');
+document.querySelectorAll('#specgrid [data-spec] circle').forEach(el=>{const spec=el.closest('[data-spec]').dataset.spec;el.addEventListener('mousemove',e=>{const i=+el.dataset.i;showTip(e,`<b>${spec} &middot; ${sq[i]}</b><br>Revenue EUR ${sf[spec][i]}m`);});el.addEventListener('mouseleave',hideTip)});
+(function(){let th='<tr><th>EUR m</th>'+sq.map(q=>`<th>${q.replace(' 20',"'")}</th>`).join('')+'<th>Chg</th></tr>';let rows=['Operational','Professional','Digital','Enterprise'].map(k=>{const v=sf[k];const chg=Math.round((v[v.length-1]-v[0])/v[0]*100);return `<tr><td>${k}</td>`+v.map(x=>`<td>${x.toLocaleString()}</td>`).join('')+`<td style="color:${chg<0?'var(--neg)':'var(--pos)'};font-weight:600">${paren(chg)}%</td></tr>`}).join('');document.getElementById('spectable').innerHTML=`<div style="overflow-x:auto"><table class="tbl">${th}${rows}</table></div>`})();
+
+// SENTIMENT frequency chart with toggles
+const fq=S.sentiment_freq, fqQ=fq.quarters, fGroups=Object.keys(fq.groups);
+const SER=["#122F67","#2869A9","#74A9CE","#9C5700","#9C0006","#4B0074","#006100"];
+let curGroup=fGroups[0];
+document.getElementById('freqtoggle').innerHTML=fGroups.map((g,i)=>`<button class="freq-btn ${i===0?'active':''}" data-g="${g}">${g}</button>`).join('');
+function drawFreq(){
+ const series=fq.groups[curGroup], keys=Object.keys(series);
+ document.getElementById('freqlegend').innerHTML=keys.map((k,i)=>`<span><i class="lg-sw" style="background:${SER[i%SER.length]}"></i>${k}</span>`).join('');
+ const W=980,H=300,pL=30,pR=150,pT=16,pB=32;
+ const xs=i=>pL+i*(W-pL-pR)/(fqQ.length-1);
+ let allv=[];keys.forEach(k=>series[k].forEach(v=>allv.push(v)));const mx=Math.max(...allv,4)+1;
+ const ys=v=>pT+(mx-v)/mx*(H-pT-pB);
+ let g='';for(let v=0;v<=mx;v+=Math.ceil(mx/4)){const y=ys(v);g+=`<line x1="${pL}" y1="${y}" x2="${W-pR}" y2="${y}" stroke="var(--border)"/><text class="axlab" x="${pL-6}" y="${y+3}" text-anchor="end">${v}</text>`}
+ let xl='';fqQ.forEach((q,i)=>{xl+=`<text class="axlab" x="${xs(i)}" y="${H-14}" text-anchor="middle" font-size="10" font-weight="600" fill="var(--ink)">${q}</text>`});
+ let paths='',labels='',dots='';
+ keys.forEach((k,ki)=>{const col=SER[ki%SER.length];const ln=series[k].map((v,i)=>(i?'L':'M')+xs(i).toFixed(1)+' '+ys(v).toFixed(1)).join(' ');paths+=`<path d="${ln}" fill="none" stroke="${col}" stroke-width="2.2"/>`;series[k].forEach((v,i)=>{dots+=`<circle cx="${xs(i)}" cy="${ys(v)}" r="3" fill="${col}"><title>${k}: ${v}</title></circle>`});const lv=series[k][series[k].length-1];labels+=`<text x="${W-pR+8}" y="${ys(lv)+3}" font-size="10" fill="${col}" font-weight="600">${k}</text>`});
+ document.getElementById('freqchart').innerHTML=`<svg class="viz" viewBox="0 0 ${W} ${H}">${g}${xl}${paths}${dots}${labels}<text class="axlab" x="2" y="${pT}">mentions</text></svg>`;
+}
+drawFreq();
+document.querySelectorAll('#freqtoggle .freq-btn').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('#freqtoggle .freq-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');curGroup=b.dataset.g;drawFreq();})});
+document.getElementById('freqreading').textContent=fq.reading;
+
+// sentiment quarter cards
+const sent=S.sentiment;const toneBadge={"-2":"below","-1":"pending","0":"inactive","1":"inreview","2":"ontrack"};
+document.getElementById('sentlist').innerHTML=sent.quarters.map(q=>`<div class="sent-item"><div class="sent-head"><span class="sent-q">${q.q}</span><span class="badge badge--${toneBadge[q.tone]}"><span class="dot"></span>${q.tone_word}</span><span class="sent-headline">${q.headline}</span></div><div class="sent-body"><div class="sent-block"><div class="sb-label">The business</div><p>${q.business}</p></div><div class="sent-block"><div class="sb-label">AI &amp; client signal</div><p>${q.ai_client}</p></div><div class="sent-block client"><div class="sb-label">What clients are saying about hiring</div><p>${q.client_demand}</p></div></div></div>`).join('');
+
+// AI tab
+document.getElementById('aitimeline').innerHTML=sent.quarters.map(q=>`<div class="sent-item"><div class="sent-head"><span class="sent-q">${q.q}</span><span class="sent-headline">What clients are telling Randstad</span></div><div class="sent-body"><div class="sent-block client" style="grid-column:1/-1;border-top:none;padding-top:0"><div class="sb-label">Client demand shape</div><p>${q.client_demand}</p></div><div class="sent-block client"><div class="sb-label">AI read</div><p>${q.ai_client}</p></div></div></div>`).join('');
+
+document.getElementById('verdict').innerHTML=`
+<p><b>The decline is real, and it is a hiring signal.</b> Group net fees fell ${Math.abs(ss.gp_decline_from_peak_pct)}% from the Q3 2022 peak, bottoming in profit at Q4 2024, when management called the labour market "stuck," with hiring in parts of the business back to 2013 to 2016 levels.</p>
+<p><b>Germany is the epicentre, but it was weak long before AI.</b> The country charts back to 2019 show Germany already down 15% with a 1.4% margin that year on regulation and macro, booming in 2021 to 2022, then collapsing into 2024 and recovering by 2026. That long arc argues the recent weakness is substantially cyclical and structural-to-Germany, not a fresh AI signal.</p>
+<p><b>The specialization split is the strongest AI-shaped clue.</b> Since 2023, Digital fell (27%) and Professional (14%), while volume Operational held roughly flat and has turned up. The AI-exposed lines fell far faster and have not recovered.</p>
+<p><b>But management's own client read cuts against a simple AI story.</b> Asked directly, the CEO said clients are not seeking a structurally smaller flexible workforce, and attributed Professional and Digital weakness to a cyclical hiring freeze. The one genuine AI-demand signal is rising client appetite for AI skills (from Q2 2025) and the AI-driven reshaping of the IT-services market. Read together: the perm and digital weakness is consistent with AI substitution at the margin, but the on-the-record client evidence points more to the cycle. The clean test remains the pure-play permanent-placement recruiters, who have no volume-staffing cushion.</p>`;
+
+document.getElementById('theme-btn').addEventListener('click',function(){var dark=document.documentElement.getAttribute('data-theme')!=='dark';if(dark)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.removeAttribute('data-theme');try{localStorage.setItem('scg_theme',dark?'dark':'light');}catch(e){}});
+
+</script>
+</body>
+</html>
